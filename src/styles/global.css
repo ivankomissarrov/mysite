@@ -357,10 +357,6 @@ a {
   background: #0a0a12;
 }
 
-.article-card.is-collapsed {
-  display: none;
-}
-
 .article-feed {
   display: flex;
   flex-direction: column;
@@ -379,6 +375,7 @@ a {
   background: transparent;
   color: var(--purple-bright);
   cursor: pointer;
+  text-decoration: none;
 }
 
 .more-articles-label {

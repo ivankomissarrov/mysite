@@ -6,10 +6,9 @@ interface Props {
   date: Date;
   tags?: string[];
   cover?: string;
-  collapsed?: boolean;
 }
 
-const { href, title, description, date, tags = [], cover, collapsed = false } = Astro.props;
+const { href, title, description, date, tags = [], cover } = Astro.props;
 const formatted = date.toLocaleDateString('ru-RU', {
   year: 'numeric',
   month: 'long',
@@ -17,16 +16,10 @@ const formatted = date.toLocaleDateString('ru-RU', {
 });
 ---
 
-<a class:list={['card', 'article-card', collapsed && 'is-collapsed']} href={href}>
+<a class="card article-card" href={href}>
   {
     cover && (
-      <img
-        class="article-card-cover"
-        src={collapsed ? undefined : cover}
-        data-cover={cover}
-        alt=""
-        loading={collapsed ? undefined : 'lazy'}
-      />
+      <img class="article-card-cover" src={cover} alt="" loading="lazy" decoding="async" />
     )
   }
   <div class="meta">
