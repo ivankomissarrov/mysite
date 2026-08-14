@@ -19,7 +19,6 @@ import { site } from '../data/site';
       которые раньше жили во ВКонтакте.
     </p>
     <div class="actions">
-      <a class="btn btn-primary" href="/posts/">Читать посты</a>
       <a class="btn btn-ghost" href="/about/">Обо мне</a>
     </div>
   </section>
@@ -41,11 +40,10 @@ import { site } from '../data/site';
     </div>
   </section>
 
-  <section class="section wrap">
+  <section class="section wrap" id="posts">
     <div class="section-head">
       <h2>Посты</h2>
-      <a class="muted-link" href="/posts/">Все посты</a>
     </div>
-    <ArticleGrid limit={6} eagerCount={3} />
+    <ArticleGrid pageSize={6} eagerCount={3} />
   </section>
 </BaseLayout>

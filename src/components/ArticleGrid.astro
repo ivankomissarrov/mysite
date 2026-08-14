@@ -3,18 +3,19 @@ import ArticleCard from './ArticleCard.astro';
 import { articlePath, getPublishedArticles } from '../lib/articles';
 
 interface Props {
-  limit?: number;
+  pageSize?: number;
   eagerCount?: number;
 }
 
-const { limit, eagerCount = 3 } = Astro.props;
+const { pageSize = 6, eagerCount = 3 } = Astro.props;
 const all = await getPublishedArticles();
-const articles = limit ? all.slice(0, limit) : all;
+const visible = all.slice(0, pageSize);
+const rest = all.slice(pageSize);
 ---
 
-<div class="article-list">
+<div class="article-list" data-article-list>
   {
-    articles.map((article, index) => (
+    visible.map((article, index) => (
       <ArticleCard
         href={articlePath(article)}
         title={article.data.title}
@@ -27,3 +28,61 @@ const articles = limit ? all.slice(0, limit) : all;
     ))
   }
 </div>
+
+{
+  rest.length > 0 && (
+    <>
+      <template id="more-posts">
+        {rest.map((article) => (
+          <ArticleCard
+            href={articlePath(article)}
+            title={article.data.title}
+            description={article.data.description}
+            date={article.data.pubDate}
+            tags={article.data.tags}
+            cover={article.data.cover}
+          />
+        ))}
+      </template>
+      <button class="load-more" type="button" data-load-more aria-label="Показать ещё посты">
+        <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+          <path
+            d="M6.5 9.5 12 15l5.5-5.5"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+      </button>
+    </>
+  )
+}
+
+<script>
+  const PAGE = 6;
+
+  function bindLoadMore() {
+    const btn = document.querySelector('[data-load-more]');
+    const list = document.querySelector('[data-article-list]');
+    const tpl = document.querySelector('#more-posts');
+    if (!(btn instanceof HTMLButtonElement) || !list || !(tpl instanceof HTMLTemplateElement)) return;
+    if (btn.dataset.bound === '1') return;
+    btn.dataset.bound = '1';
+
+    btn.addEventListener('click', () => {
+      const frag = document.createDocumentFragment();
+      let n = 0;
+      while (n < PAGE && tpl.content.firstElementChild) {
+        frag.append(tpl.content.firstElementChild);
+        n += 1;
+      }
+      list.append(frag);
+      if (!tpl.content.firstElementChild) btn.hidden = true;
+    });
+  }
+
+  bindLoadMore();
+  document.addEventListener('astro:page-load', bindLoadMore);
+</script>

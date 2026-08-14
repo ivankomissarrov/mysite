@@ -22,7 +22,6 @@ export const site = {
   vk: 'https://vk.ru/ivankomissarrov',
   nav: [
     { href: '/', label: 'Главная' },
-    { href: '/posts/', label: 'Посты' },
     { href: '/about/', label: 'Обо мне' },
   ],
 } as const;

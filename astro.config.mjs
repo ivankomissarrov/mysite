@@ -64,7 +64,8 @@ export default defineConfig({
     rehypePlugins: [rehypeLazyImages],
   },
   redirects: {
-    '/articles': '/posts',
+    '/articles': '/',
     '/articles/[id]': '/posts/[id]',
+    '/posts': '/',
   },
 });

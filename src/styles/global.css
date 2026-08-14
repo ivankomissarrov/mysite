@@ -315,6 +315,37 @@ a {
   align-items: stretch;
 }
 
+.load-more {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  margin: 2rem auto 0;
+  padding: 0;
+  border-radius: 999px;
+  border: 1px solid var(--border-strong);
+  background: rgba(14, 12, 24, 0.72);
+  color: var(--text);
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s, background 0.15s, border-color 0.15s;
+}
+
+.load-more:hover {
+  transform: translateY(2px);
+  border-color: var(--purple-bright);
+  box-shadow: 0 0 24px rgba(124, 58, 237, 0.28);
+  background: rgba(22, 16, 40, 0.88);
+}
+
+.load-more:focus-visible {
+  outline: 2px solid var(--cyan);
+  outline-offset: 3px;
+}
+
+.load-more[hidden] {
+  display: none;
+}
+
 .card.article-card {
   display: grid;
   grid-template-rows: auto auto auto 1fr;
