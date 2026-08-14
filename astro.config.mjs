@@ -36,4 +36,8 @@ export default defineConfig({
       theme: 'houston',
     },
   },
+  redirects: {
+    '/articles': '/posts',
+    '/articles/[id]': '/posts/[id]',
+  },
 });

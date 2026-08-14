@@ -11,5 +11,5 @@ export async function getPublishedArticles(): Promise<Article[]> {
 }
 
 export function articlePath(article: Article): string {
-  return `/articles/${article.id}/`;
+  return `/posts/${article.id}/`;
 }
