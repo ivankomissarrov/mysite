@@ -7,10 +7,10 @@
     "node": ">=18.20.8"
   },
   "scripts": {
-    "start": "astro dev --port 4321",
-    "dev": "astro dev --port 4321",
+    "start": "astro dev --host 0.0.0.0 --port 4321",
+    "dev": "astro dev --host 0.0.0.0 --port 4321",
     "build": "astro build",
-    "preview": "astro preview --port 4321",
+    "preview": "astro preview --host 0.0.0.0 --port 4321",
     "astro": "astro"
   },
   "dependencies": {

@@ -7,11 +7,24 @@ export default defineConfig({
   trailingSlash: 'always',
   server: {
     port: 4321,
-    host: '127.0.0.1',
+    host: true,
+    allowedHosts: true,
   },
   preview: {
     port: 4321,
-    host: '127.0.0.1',
+    host: true,
+    allowedHosts: true,
+  },
+  vite: {
+    server: {
+      host: true,
+      allowedHosts: true,
+      strictPort: true,
+    },
+    preview: {
+      host: true,
+      allowedHosts: true,
+    },
   },
   integrations: [
     sitemap({
