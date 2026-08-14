@@ -1,10 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import ArticleCard from '../components/ArticleCard.astro';
+import ArticleGrid from '../components/ArticleGrid.astro';
 import { site } from '../data/site';
-import { articlePath, getPublishedArticles } from '../lib/articles';
-
-const articles = (await getPublishedArticles()).slice(0, 6);
 ---
 
 <BaseLayout>
@@ -49,19 +46,6 @@ const articles = (await getPublishedArticles()).slice(0, 6);
       <h2>Последние статьи</h2>
       <a class="muted-link" href="/articles/">Все материалы</a>
     </div>
-    <div class="article-list">
-      {
-        articles.map((article) => (
-          <ArticleCard
-            href={articlePath(article)}
-            title={article.data.title}
-            description={article.data.description}
-            date={article.data.pubDate}
-            tags={article.data.tags}
-            cover={article.data.cover}
-          />
-        ))
-      }
-    </div>
+    <ArticleGrid initial={6} step={6} />
   </section>
 </BaseLayout>

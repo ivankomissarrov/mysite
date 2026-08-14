@@ -1,0 +1,70 @@
+---
+import ArticleCard from './ArticleCard.astro';
+import { articlePath, getPublishedArticles } from '../lib/articles';
+
+interface Props {
+  initial?: number;
+  step?: number;
+}
+
+const { initial = 6, step = 6 } = Astro.props;
+const articles = await getPublishedArticles();
+const hasMore = articles.length > initial;
+---
+
+<div class="article-feed">
+  <div class="article-list">
+    {
+      articles.map((article, index) => (
+        <ArticleCard
+          href={articlePath(article)}
+          title={article.data.title}
+          description={article.data.description}
+          date={article.data.pubDate}
+          tags={article.data.tags}
+          cover={article.data.cover}
+          collapsed={index >= initial}
+        />
+      ))
+    }
+  </div>
+  {
+    hasMore && (
+      <button
+        type="button"
+        class="more-articles"
+        data-more-articles
+        data-step={String(step)}
+        aria-label="Показать ещё статьи"
+      >
+        <span class="more-articles-label">Ещё статьи</span>
+        <svg class="more-articles-arrow" viewBox="0 0 24 24" aria-hidden="true">
+          <path
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M6 9l6 6 6-6"
+          ></path>
+        </svg>
+      </button>
+    )
+  }
+</div>
+
+<script>
+  document.querySelectorAll<HTMLButtonElement>('[data-more-articles]').forEach((button) => {
+    const feed = button.closest('.article-feed');
+    if (!feed) return;
+    const step = Number(button.dataset.step) || 6;
+
+    button.addEventListener('click', () => {
+      const hidden = [...feed.querySelectorAll('.article-card.is-collapsed')];
+      hidden.slice(0, step).forEach((card) => card.classList.remove('is-collapsed'));
+      if (!feed.querySelector('.article-card.is-collapsed')) {
+        button.remove();
+      }
+    });
+  });
+</script>

@@ -1,10 +1,9 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import ArticleCard from '../../components/ArticleCard.astro';
-import { articlePath, getPublishedArticles } from '../../lib/articles';
+import ArticleGrid from '../../components/ArticleGrid.astro';
+import { getPublishedArticles } from '../../lib/articles';
 
-const articles = await getPublishedArticles();
-const n = articles.length;
+const n = (await getPublishedArticles()).length;
 const n10 = n % 10;
 const n100 = n % 100;
 const countWord =
@@ -32,19 +31,6 @@ const countWord =
   </section>
 
   <section class="section wrap">
-    <div class="article-list">
-      {
-        articles.map((article) => (
-          <ArticleCard
-            href={articlePath(article)}
-            title={article.data.title}
-            description={article.data.description}
-            date={article.data.pubDate}
-            tags={article.data.tags}
-            cover={article.data.cover}
-          />
-        ))
-      }
-    </div>
+    <ArticleGrid initial={6} step={6} />
   </section>
 </BaseLayout>
