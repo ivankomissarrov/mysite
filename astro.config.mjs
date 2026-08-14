@@ -1,16 +1,21 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
-import { site } from './src/data/site.ts';
 
 export default defineConfig({
-  site: site.url,
+  site: 'https://ivankomissarrov.github.io',
   trailingSlash: 'always',
+  server: {
+    port: 4321,
+    host: '127.0.0.1',
+  },
+  preview: {
+    port: 4321,
+    host: '127.0.0.1',
+  },
   integrations: [
     sitemap({
-      filter: (page) => !page.endsWith('/404'),
-      changefreq: 'weekly',
-      lastmod: new Date(),
+      filter: (page) => !page.includes('/404'),
     }),
   ],
   markdown: {

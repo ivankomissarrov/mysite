@@ -2,18 +2,20 @@
   "name": "mysite",
   "type": "module",
   "version": "0.0.1",
+  "private": true,
   "engines": {
-    "node": ">=22.12.0"
+    "node": ">=18.20.8"
   },
   "scripts": {
-    "dev": "astro dev --host 0.0.0.0",
+    "start": "astro dev --port 4321",
+    "dev": "astro dev --port 4321",
     "build": "astro build",
-    "preview": "astro preview --host 0.0.0.0",
+    "preview": "astro preview --port 4321",
     "astro": "astro"
   },
   "dependencies": {
-    "@astrojs/rss": "^4.0.16",
-    "@astrojs/sitemap": "^3.7.0",
-    "astro": "^7.2.2"
+    "@astrojs/rss": "^4.0.19",
+    "@astrojs/sitemap": "^3.6.0",
+    "astro": "^5.18.2"
   }
 }
