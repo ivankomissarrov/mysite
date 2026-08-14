@@ -4,21 +4,30 @@ import ArticleCard from '../../components/ArticleCard.astro';
 import { articlePath, getPublishedArticles } from '../../lib/articles';
 
 const articles = await getPublishedArticles();
+const n = articles.length;
+const n10 = n % 10;
+const n100 = n % 100;
+const countWord =
+  n10 === 1 && n100 !== 11
+    ? 'материал'
+    : n10 >= 2 && n10 <= 4 && (n100 < 12 || n100 > 14)
+      ? 'материала'
+      : 'материалов';
 ---
 
 <BaseLayout
   title="Статьи"
-  description="Все статьи и заметки Ивана Комиссарова: личный сайт, письмо и то, как быть заметнее в поиске."
+  description="Заметки Ивана Комиссарова про геймдизайн, игропрактику, Граникон и образовательные игры."
 >
   <section class="page-hero wrap">
     <p class="hero-kicker">Архив</p>
     <h1 class="page-title">
       Статьи
       <br />
-      <span class="gradient-text">Тексты, которые можно найти</span>
+      <span class="gradient-text">Игры, курсы, конвенты</span>
     </h1>
     <p class="lede" style="margin-inline: 0;">
-      {articles.length} {articles.length === 1 ? 'материал' : 'материала'}. Новые появляются сверху.
+      {n} {countWord}. Новые появляются сверху.
     </p>
   </section>
 
@@ -32,6 +41,7 @@ const articles = await getPublishedArticles();
             description={article.data.description}
             date={article.data.pubDate}
             tags={article.data.tags}
+            cover={article.data.cover}
           />
         ))
       }

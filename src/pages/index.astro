@@ -4,22 +4,22 @@ import ArticleCard from '../components/ArticleCard.astro';
 import { site } from '../data/site';
 import { articlePath, getPublishedArticles } from '../lib/articles';
 
-const articles = (await getPublishedArticles()).slice(0, 3);
+const articles = (await getPublishedArticles()).slice(0, 6);
 ---
 
 <BaseLayout>
   <section class="hero wrap">
     <span class="glow-orb" style="top: -40px; left: 8%;"></span>
     <span class="glow-orb" style="right: 6%; top: 40px; background: radial-gradient(circle, rgba(92,225,255,.22), transparent 68%);"></span>
-    <p class="hero-kicker">Персональный сайт</p>
+    <p class="hero-kicker">Игропрактика и геймдизайн</p>
     <h1>
       {site.name}
       <br />
-      <span class="gradient-text">Пишу, чтобы меня находили</span>
+      <span class="gradient-text">Игры для образования</span>
     </h1>
     <p class="lede">
-      Статьи, заметки и мысли — на своём адресе, а не только в ленте. Здесь можно читать без алгоритма
-      и находить меня по имени и темам, о которых я говорю.
+      Делаю настольные и образовательные игры, веду курсы и собираю конвенты. Здесь — рабочие заметки,
+      которые раньше жили во ВКонтакте.
     </p>
     <div class="actions">
       <a class="btn btn-primary" href="/articles/">Читать статьи</a>
@@ -30,16 +30,16 @@ const articles = (await getPublishedArticles()).slice(0, 3);
   <section class="section wrap">
     <div class="grid-3">
       <article class="card">
-        <h3>Свои тексты</h3>
-        <p>Каждая статья — отдельная страница с заголовком, описанием и адресом, который можно искать.</p>
+        <h3>Настольный геймдизайн</h3>
+        <p>Игры «под ключ», прототипы, консультации по механикам и работа с непрофильными заказчиками.</p>
       </article>
       <article class="card">
-        <h3>Понятная структура</h3>
-        <p>Главная, статьи, обо мне. Поисковик и человек видят одно и то же: кто я и о чём пишу.</p>
+        <h3>Игропрактика</h3>
+        <p>Курсы и интенсивы для педагогов, механики под образовательные цели, живое действие и настолки.</p>
       </article>
       <article class="card">
-        <h3>Живой архив</h3>
-        <p>Старые материалы не пропадают в ленте. Их можно открыть через год по той же ссылке.</p>
+        <h3>Ивенты</h3>
+        <p>Граникон, Гильдия разработчиков настольных игр, программы для студентов и подростков.</p>
       </article>
     </div>
   </section>
@@ -58,6 +58,7 @@ const articles = (await getPublishedArticles()).slice(0, 3);
             description={article.data.description}
             date={article.data.pubDate}
             tags={article.data.tags}
+            cover={article.data.cover}
           />
         ))
       }

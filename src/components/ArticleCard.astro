@@ -5,9 +5,10 @@ interface Props {
   description: string;
   date: Date;
   tags?: string[];
+  cover?: string;
 }
 
-const { href, title, description, date, tags = [] } = Astro.props;
+const { href, title, description, date, tags = [], cover } = Astro.props;
 const formatted = date.toLocaleDateString('ru-RU', {
   year: 'numeric',
   month: 'long',
@@ -16,6 +17,11 @@ const formatted = date.toLocaleDateString('ru-RU', {
 ---
 
 <a class="card article-card" href={href}>
+  {
+    cover && (
+      <img class="article-card-cover" src={cover} alt="" width="640" height="360" loading="lazy" />
+    )
+  }
   <div class="meta">
     <time datetime={date.toISOString()}>{formatted}</time>
     {tags.slice(0, 3).map((tag) => <span class="tag">#{tag}</span>)}

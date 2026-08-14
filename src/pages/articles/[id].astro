@@ -36,6 +36,9 @@ const articleLd = {
     url: site.url,
   },
   mainEntityOfPage: new URL(articlePath(article), site.url).href,
+  ...(article.data.cover
+    ? { image: new URL(article.data.cover, site.url).href }
+    : {}),
 };
 ---
 
@@ -46,6 +49,7 @@ const articleLd = {
   publishedTime={published}
   updatedTime={updated}
   path={articlePath(article)}
+  image={article.data.cover}
 >
   <Fragment slot="head">
     <script type="application/ld+json" set:html={JSON.stringify(articleLd)} />
