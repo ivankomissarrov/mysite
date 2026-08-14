@@ -18,7 +18,7 @@
   --shadow-glow: 0 0 40px rgba(124, 58, 237, 0.28);
   --font-display: 'Unbounded', sans-serif;
   --font-body: 'Manrope', system-ui, sans-serif;
-  --max: 1200px;
+  --max: 1360px;
 }
 
 *,
@@ -349,7 +349,7 @@ a {
 
 .article-card-cover {
   width: 100%;
-  aspect-ratio: 3 / 4;
+  aspect-ratio: 4 / 5;
   height: auto;
   object-fit: cover;
   object-position: center;
@@ -470,11 +470,7 @@ a {
 @media (max-width: 560px) {
   .article-list {
     grid-template-columns: 1fr;
-    max-width: 22rem;
+    max-width: 26rem;
     margin-inline: auto;
-  }
-
-  .article-card-cover {
-    aspect-ratio: 3 / 4;
   }
 }
