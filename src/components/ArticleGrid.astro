@@ -2,47 +2,20 @@
 import ArticleCard from './ArticleCard.astro';
 import { articlePath, getPublishedArticles } from '../lib/articles';
 
-interface Props {
-  initial?: number;
-  moreHref?: string;
-}
-
-const { initial, moreHref } = Astro.props;
 const articles = await getPublishedArticles();
-const visible = initial ? articles.slice(0, initial) : articles;
-const hasMore = Boolean(moreHref) && articles.length > visible.length;
 ---
 
-<div class="article-feed">
-  <div class="article-list">
-    {
-      visible.map((article) => (
-        <ArticleCard
-          href={articlePath(article)}
-          title={article.data.title}
-          description={article.data.description}
-          date={article.data.pubDate}
-          tags={article.data.tags}
-          cover={article.data.cover}
-        />
-      ))
-    }
-  </div>
+<div class="article-list">
   {
-    hasMore && moreHref && (
-      <a class="more-articles" href={moreHref} aria-label="Показать ещё статьи">
-        <span class="more-articles-label">Ещё статьи</span>
-        <svg class="more-articles-arrow" viewBox="0 0 24 24" aria-hidden="true">
-          <path
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2.2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M6 9l6 6 6-6"
-          ></path>
-        </svg>
-      </a>
-    )
+    articles.map((article) => (
+      <ArticleCard
+        href={articlePath(article)}
+        title={article.data.title}
+        description={article.data.description}
+        date={article.data.pubDate}
+        tags={article.data.tags}
+        cover={article.data.cover}
+      />
+    ))
   }
 </div>
