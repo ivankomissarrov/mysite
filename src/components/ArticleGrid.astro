@@ -61,7 +61,14 @@ const hasMore = articles.length > initial;
 
     button.addEventListener('click', () => {
       const hidden = [...feed.querySelectorAll('.article-card.is-collapsed')];
-      hidden.slice(0, step).forEach((card) => card.classList.remove('is-collapsed'));
+      hidden.slice(0, step).forEach((card) => {
+        const img = card.querySelector('img[data-cover]');
+        if (img instanceof HTMLImageElement && img.dataset.cover) {
+          img.loading = 'eager';
+          img.src = img.dataset.cover;
+        }
+        card.classList.remove('is-collapsed');
+      });
       if (!feed.querySelector('.article-card.is-collapsed')) {
         button.remove();
       }

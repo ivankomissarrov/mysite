@@ -20,7 +20,13 @@ const formatted = date.toLocaleDateString('ru-RU', {
 <a class:list={['card', 'article-card', collapsed && 'is-collapsed']} href={href}>
   {
     cover && (
-      <img class="article-card-cover" src={cover} alt="" loading="lazy" />
+      <img
+        class="article-card-cover"
+        src={collapsed ? undefined : cover}
+        data-cover={cover}
+        alt=""
+        loading={collapsed ? undefined : 'lazy'}
+      />
     )
   }
   <div class="meta">
