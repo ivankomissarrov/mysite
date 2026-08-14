@@ -27,7 +27,7 @@ const {
 
 const canonical = new URL(path, site.url).href;
 const pageTitle = title === site.title ? title : `${title} — ${site.name}`;
-const imageUrl = image ? new URL(image, site.url).href : undefined;
+const imageUrl = new URL(image ?? site.avatar, site.url).href;
 const jsonLd = {
   '@context': 'https://schema.org',
   '@graph': [
@@ -47,6 +47,7 @@ const jsonLd = {
       familyName: site.author.familyName,
       url: site.url,
       jobTitle: site.author.jobTitle,
+      image: new URL(site.avatar, site.url).href,
       sameAs: site.author.sameAs,
     },
   ],
@@ -80,6 +81,7 @@ const jsonLd = {
     <meta name="twitter:description" content={description} />
     <link rel="preload" href="/fonts/unbounded-cyrillic.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/manrope-cyrillic.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={site.avatar} as="image" />
     <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
     <slot name="head" />
     <ClientRouter />

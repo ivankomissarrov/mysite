@@ -20,6 +20,7 @@ export const site = {
   },
   telegram: 'https://t.me/IvanKomissarov',
   vk: 'https://vk.ru/ivankomissarrov',
+  avatar: '/images/avatar.webp',
   nav: [
     { href: '/', label: 'Главная' },
     { href: '/about/', label: 'Обо мне' },

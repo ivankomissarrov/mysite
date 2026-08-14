@@ -255,9 +255,36 @@ async function ensureThumbs() {
   console.log(made ? `thumbs: created ${made}` : 'thumbs: up to date');
 }
 
+async function ensureAvatar() {
+  const dir = path.join(root, 'public', 'images');
+  await mkdir(dir, { recursive: true });
+  const dest = path.join(dir, 'avatar.webp');
+  const sources = ['avatar.jpg', 'avatar.jpeg', 'avatar.png'];
+  let src;
+  for (const name of sources) {
+    const file = path.join(dir, name);
+    if (await exists(file)) {
+      src = file;
+      break;
+    }
+  }
+  if (!src) {
+    if (await exists(dest)) console.log('avatar: using local webp');
+    else console.log('avatar: missing public/images/avatar.jpg');
+    return;
+  }
+  await sharp(src, { failOn: 'none' })
+    .rotate()
+    .resize({ width: 512, height: 512, fit: 'cover', position: 'centre' })
+    .webp({ quality: 82 })
+    .toFile(dest);
+  console.log('avatar: wrote avatar.webp');
+}
+
 const start = Date.now();
 await ensureFonts();
 await localizeArticleImages();
 if (optimize) await optimizeExistingImages();
 await ensureThumbs();
+await ensureAvatar();
 console.log(`local-assets ${Date.now() - start}ms`);

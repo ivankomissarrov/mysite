@@ -7,7 +7,9 @@ const path = Astro.url.pathname;
 <header class="site-header">
   <div class="wrap header-inner">
     <a class="brand" href="/">
-      <span class="brand-mark" aria-hidden="true">{site.shortName}</span>
+      <span class="brand-avatar" aria-hidden="true">
+        <img src={site.avatar} alt="" width="38" height="38" />
+      </span>
       <span>{site.name}</span>
     </a>
     <nav class="nav" aria-label="Основное меню">

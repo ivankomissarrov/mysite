@@ -123,6 +123,50 @@ a {
   font-size: 0.78rem;
 }
 
+.brand-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  padding: 1.5px;
+  background: linear-gradient(140deg, #d8b4fe, #7c3aed 50%, #5ce1ff);
+  box-shadow: 0 0 18px rgba(168, 85, 247, 0.45);
+  flex-shrink: 0;
+}
+
+.brand-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  background: #0a0a12;
+}
+
+.hero-avatar {
+  width: 168px;
+  height: 168px;
+  margin: 0 auto 1.7rem;
+  border-radius: 50%;
+  padding: 3px;
+  background: linear-gradient(145deg, #e9d5ff 0%, #7c3aed 48%, #5ce1ff 100%);
+  box-shadow:
+    0 0 0 8px rgba(181, 107, 255, 0.08),
+    0 0 48px rgba(124, 58, 237, 0.4);
+}
+
+.hero-avatar-sm {
+  width: 128px;
+  height: 128px;
+  margin-bottom: 1.4rem;
+}
+
+.hero-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  background: #0a0a12;
+}
+
 .nav {
   display: flex;
   gap: 0.35rem;
