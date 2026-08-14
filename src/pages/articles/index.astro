@@ -1,0 +1,40 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ArticleCard from '../../components/ArticleCard.astro';
+import { articlePath, getPublishedArticles } from '../../lib/articles';
+
+const articles = await getPublishedArticles();
+---
+
+<BaseLayout
+  title="Статьи"
+  description="Все статьи и заметки Ивана Комиссарова: личный сайт, письмо и то, как быть заметнее в поиске."
+>
+  <section class="page-hero wrap">
+    <p class="hero-kicker">Архив</p>
+    <h1 class="page-title">
+      Статьи
+      <br />
+      <span class="gradient-text">Тексты, которые можно найти</span>
+    </h1>
+    <p class="lede" style="margin-inline: 0;">
+      {articles.length} {articles.length === 1 ? 'материал' : 'материала'}. Новые появляются сверху.
+    </p>
+  </section>
+
+  <section class="section wrap">
+    <div class="article-list">
+      {
+        articles.map((article) => (
+          <ArticleCard
+            href={articlePath(article)}
+            title={article.data.title}
+            description={article.data.description}
+            date={article.data.pubDate}
+            tags={article.data.tags}
+          />
+        ))
+      }
+    </div>
+  </section>
+</BaseLayout>

@@ -1,0 +1,44 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { site } from '../data/site';
+---
+
+<BaseLayout
+  title="Обо мне"
+  description={`Кто такой ${site.name} и зачем этот сайт: место для статей, заметок и контакта.`}
+>
+  <section class="page-hero wrap">
+    <p class="hero-kicker">Обо мне</p>
+    <h1 class="page-title">
+      {site.name}
+      <br />
+      <span class="gradient-text">Текст вместо ленты</span>
+    </h1>
+  </section>
+
+  <section class="section wrap prose">
+    <p>
+      Меня зовут Иван Комиссаров. Этот сайт нужен для простого: чтобы меня было легче найти в интернете
+      и чтобы мысли жили в виде статей, а не растворялись в чатах.
+    </p>
+    <p>
+      Здесь я публикую заметки и более длинные тексты. Если тема вам близка — читайте раздел
+      <a href="/articles/">«Статьи»</a>. Если хотите связаться, пишите через GitHub:
+      <a href="https://github.com/ivankomissarrov">@ivankomissarrov</a>.
+    </p>
+    <div class="grid-3" style="margin-top: 2rem;">
+      <article class="card">
+        <h3>Что здесь будет</h3>
+        <p>Статьи, наблюдения, разборы. Всё, что стоит сохранить как страницу, а не как сторис.</p>
+      </article>
+      <article class="card">
+        <h3>Как читать</h3>
+        <p>Свежие материалы на главной. Полный список — в разделе статей. Есть RSS.</p>
+      </article>
+      <article class="card">
+        <h3>Как писать</h3>
+        <p>Новый текст — это Markdown-файл. Инструкция есть в статье про публикацию.</p>
+      </article>
+    </div>
+  </section>
+</BaseLayout>

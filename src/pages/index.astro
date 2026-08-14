@@ -1,0 +1,66 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ArticleCard from '../components/ArticleCard.astro';
+import { site } from '../data/site';
+import { articlePath, getPublishedArticles } from '../lib/articles';
+
+const articles = (await getPublishedArticles()).slice(0, 3);
+---
+
+<BaseLayout>
+  <section class="hero wrap">
+    <span class="glow-orb" style="top: -40px; left: 8%;"></span>
+    <span class="glow-orb" style="right: 6%; top: 40px; background: radial-gradient(circle, rgba(92,225,255,.22), transparent 68%);"></span>
+    <p class="hero-kicker">Персональный сайт</p>
+    <h1>
+      {site.name}
+      <br />
+      <span class="gradient-text">Пишу, чтобы меня находили</span>
+    </h1>
+    <p class="lede">
+      Статьи, заметки и мысли — на своём адресе, а не только в ленте. Здесь можно читать без алгоритма
+      и находить меня по имени и темам, о которых я говорю.
+    </p>
+    <div class="actions">
+      <a class="btn btn-primary" href="/articles/">Читать статьи</a>
+      <a class="btn btn-ghost" href="/about/">Обо мне</a>
+    </div>
+  </section>
+
+  <section class="section wrap">
+    <div class="grid-3">
+      <article class="card">
+        <h3>Свои тексты</h3>
+        <p>Каждая статья — отдельная страница с заголовком, описанием и адресом, который можно искать.</p>
+      </article>
+      <article class="card">
+        <h3>Понятная структура</h3>
+        <p>Главная, статьи, обо мне. Поисковик и человек видят одно и то же: кто я и о чём пишу.</p>
+      </article>
+      <article class="card">
+        <h3>Живой архив</h3>
+        <p>Старые материалы не пропадают в ленте. Их можно открыть через год по той же ссылке.</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="section wrap">
+    <div class="section-head">
+      <h2>Последние статьи</h2>
+      <a class="muted-link" href="/articles/">Все материалы</a>
+    </div>
+    <div class="article-list">
+      {
+        articles.map((article) => (
+          <ArticleCard
+            href={articlePath(article)}
+            title={article.data.title}
+            description={article.data.description}
+            date={article.data.pubDate}
+            tags={article.data.tags}
+          />
+        ))
+      }
+    </div>
+  </section>
+</BaseLayout>

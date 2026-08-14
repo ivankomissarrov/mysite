@@ -1,0 +1,14 @@
+---
+import { site } from '../data/site';
+---
+
+<footer class="site-footer">
+  <div class="wrap footer-inner">
+    <p>© {new Date().getFullYear()} {site.name}</p>
+    <p>
+      <a class="muted-link" href="/rss.xml">RSS</a>
+      {' · '}
+      <a class="muted-link" href="/articles/">Статьи</a>
+    </p>
+  </div>
+</footer>
