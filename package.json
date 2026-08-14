@@ -7,15 +7,18 @@
     "node": ">=18.20.8"
   },
   "scripts": {
-    "start": "astro dev --host 0.0.0.0 --port 4321",
-    "dev": "astro dev --host 0.0.0.0 --port 4321",
-    "build": "astro build",
+    "start": "node scripts/local-assets.mjs && astro dev --host 0.0.0.0 --port 4321",
+    "dev": "node scripts/local-assets.mjs && astro dev --host 0.0.0.0 --port 4321",
+    "build": "node scripts/local-assets.mjs && astro build",
     "preview": "astro preview --host 0.0.0.0 --port 4321",
+    "assets": "node scripts/local-assets.mjs",
+    "assets:optimize": "node scripts/local-assets.mjs --optimize",
     "astro": "astro"
   },
   "dependencies": {
     "@astrojs/rss": "^4.0.19",
     "@astrojs/sitemap": "^3.6.0",
-    "astro": "^5.18.2"
+    "astro": "^5.18.2",
+    "sharp": "^0.34.5"
   }
 }

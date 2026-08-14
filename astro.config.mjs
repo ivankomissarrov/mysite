@@ -2,6 +2,20 @@
 import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 
+function rehypeLazyImages() {
+  return (tree) => {
+    const walk = (node) => {
+      if (node?.type === 'element' && node.tagName === 'img') {
+        node.properties ??= {};
+        node.properties.loading ??= 'lazy';
+        node.properties.decoding ??= 'async';
+      }
+      for (const child of node?.children ?? []) walk(child);
+    };
+    walk(tree);
+  };
+}
+
 export default defineConfig({
   site: 'https://ivankomissarrov.github.io',
   trailingSlash: 'always',
@@ -35,6 +49,7 @@ export default defineConfig({
     shikiConfig: {
       theme: 'houston',
     },
+    rehypePlugins: [rehypeLazyImages],
   },
   redirects: {
     '/articles': '/posts',

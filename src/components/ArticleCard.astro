@@ -6,9 +6,10 @@ interface Props {
   date: Date;
   tags?: string[];
   cover?: string;
+  eager?: boolean;
 }
 
-const { href, title, description, date, tags = [], cover } = Astro.props;
+const { href, title, description, date, tags = [], cover, eager = false } = Astro.props;
 const formatted = date.toLocaleDateString('ru-RU', {
   year: 'numeric',
   month: 'long',
@@ -19,7 +20,14 @@ const formatted = date.toLocaleDateString('ru-RU', {
 <a class="card article-card" href={href}>
   {
     cover && (
-      <img class="article-card-cover" src={cover} alt="" decoding="async" />
+      <img
+        class="article-card-cover"
+        src={cover}
+        alt=""
+        decoding="async"
+        loading={eager ? 'eager' : 'lazy'}
+        fetchpriority={eager ? 'high' : 'low'}
+      />
     )
   }
   <div class="meta">

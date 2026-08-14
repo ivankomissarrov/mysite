@@ -7,7 +7,7 @@ const articles = await getPublishedArticles();
 
 <div class="article-list">
   {
-    articles.map((article) => (
+    articles.map((article, index) => (
       <ArticleCard
         href={articlePath(article)}
         title={article.data.title}
@@ -15,6 +15,7 @@ const articles = await getPublishedArticles();
         date={article.data.pubDate}
         tags={article.data.tags}
         cover={article.data.cover}
+        eager={index < 6}
       />
     ))
   }
