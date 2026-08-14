@@ -19,12 +19,13 @@ import sharp from 'sharp';
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const fontsDir = path.join(root, 'public', 'fonts');
 const imagesDir = path.join(root, 'public', 'images', 'articles');
+const thumbsDir = path.join(imagesDir, 'thumbs');
 const articlesDir = path.join(root, 'src', 'content', 'articles');
 const optimize = process.argv.includes('--optimize');
 
 const FONT_CSS_URL =
   'https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700&family=Unbounded:wght@500;700&display=swap';
-const SKIP_SUBSETS = new Set(['greek', 'vietnamese']);
+const SKIP_SUBSETS = new Set(['greek', 'vietnamese', 'latin-ext', 'cyrillic-ext']);
 const REQUIRED_FONTS = [
   'manrope-cyrillic.woff2',
   'manrope-latin.woff2',
@@ -33,6 +34,8 @@ const REQUIRED_FONTS = [
 ];
 const MAX_EDGE = 1400;
 const JPEG_QUALITY = 78;
+const THUMB_WIDTH = 720;
+const THUMB_QUALITY = 68;
 const FONT_UA =
   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36';
 
@@ -60,19 +63,18 @@ function localFontName(family, subset) {
 
 async function ensureFonts() {
   await mkdir(fontsDir, { recursive: true });
-  const cssPath = path.join(fontsDir, 'fonts.css');
   const missing = [];
   for (const name of REQUIRED_FONTS) {
     if (!(await exists(path.join(fontsDir, name)))) missing.push(name);
   }
-  if ((await exists(cssPath)) && missing.length === 0) {
+  if (missing.length === 0) {
     console.log('fonts: using local files');
     return;
   }
 
   const css = await (await fetch(FONT_CSS_URL, { headers: { 'User-Agent': FONT_UA } })).text();
   const blockRe = /\/\* ([^*]+) \*\/\s*@font-face \{([^}]+)\}/g;
-  const outBlocks = [];
+  const seen = new Set();
   let match;
 
   while ((match = blockRe.exec(css))) {
@@ -83,18 +85,16 @@ async function ensureFonts() {
     const src = body.match(/url\((https:\/\/[^)]+)\)/)?.[1];
     if (!family || !src) continue;
     const filename = localFontName(family, subset);
+    if (seen.has(filename)) continue;
+    seen.add(filename);
     const dest = path.join(fontsDir, filename);
     if (!(await exists(dest))) {
       const { buffer } = await fetchBuffer(src);
       await writeFile(dest, buffer);
       console.log(`font + ${filename}`);
     }
-    outBlocks.push(
-      `/* ${subset} */\n@font-face {${body.replace(src, `/${path.posix.join('fonts', filename)}`)}}`,
-    );
   }
 
-  await writeFile(cssPath, `${outBlocks.join('\n')}\n`);
   await writeFile(
     path.join(fontsDir, 'LICENSE.txt'),
     'Manrope and Unbounded are licensed under the SIL Open Font License 1.1.\nSources: https://fonts.google.com/specimen/Manrope and https://fonts.google.com/specimen/Unbounded\n',
@@ -231,8 +231,33 @@ async function optimizeExistingImages() {
   console.log(saved ? `images: saved ${(saved / 1024 / 1024).toFixed(1)}MB` : 'images: already compressed');
 }
 
+async function ensureThumbs() {
+  await mkdir(thumbsDir, { recursive: true });
+  const files = (await readdir(imagesDir)).filter((name) => /\.(jpe?g|png|webp)$/i.test(name));
+  let made = 0;
+
+  for (const name of files) {
+    const src = path.join(imagesDir, name);
+    const dest = path.join(thumbsDir, name.replace(/\.[^.]+$/, '.webp'));
+    const srcStat = await stat(src);
+    if (await exists(dest)) {
+      const destStat = await stat(dest);
+      if (destStat.mtimeMs >= srcStat.mtimeMs && destStat.size > 0) continue;
+    }
+    await sharp(src, { failOn: 'none' })
+      .rotate()
+      .resize({ width: THUMB_WIDTH, withoutEnlargement: true })
+      .webp({ quality: THUMB_QUALITY })
+      .toFile(dest);
+    made += 1;
+  }
+
+  console.log(made ? `thumbs: created ${made}` : 'thumbs: up to date');
+}
+
 const start = Date.now();
 await ensureFonts();
 await localizeArticleImages();
 if (optimize) await optimizeExistingImages();
+await ensureThumbs();
 console.log(`local-assets ${Date.now() - start}ms`);

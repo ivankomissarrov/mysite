@@ -44,8 +44,8 @@ import { site } from '../data/site';
   <section class="section wrap">
     <div class="section-head">
       <h2>Посты</h2>
-      <a class="muted-link" href="/posts/">Архив</a>
+      <a class="muted-link" href="/posts/">Все посты</a>
     </div>
-    <ArticleGrid />
+    <ArticleGrid limit={6} eagerCount={3} />
   </section>
 </BaseLayout>

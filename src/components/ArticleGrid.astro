@@ -2,7 +2,14 @@
 import ArticleCard from './ArticleCard.astro';
 import { articlePath, getPublishedArticles } from '../lib/articles';
 
-const articles = await getPublishedArticles();
+interface Props {
+  limit?: number;
+  eagerCount?: number;
+}
+
+const { limit, eagerCount = 3 } = Astro.props;
+const all = await getPublishedArticles();
+const articles = limit ? all.slice(0, limit) : all;
 ---
 
 <div class="article-list">
@@ -15,7 +22,7 @@ const articles = await getPublishedArticles();
         date={article.data.pubDate}
         tags={article.data.tags}
         cover={article.data.cover}
-        eager={index < 6}
+        eager={index < eagerCount}
       />
     ))
   }

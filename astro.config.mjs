@@ -4,11 +4,19 @@ import sitemap from '@astrojs/sitemap';
 
 function rehypeLazyImages() {
   return (tree) => {
+    let first = true;
     const walk = (node) => {
       if (node?.type === 'element' && node.tagName === 'img') {
         node.properties ??= {};
-        node.properties.loading ??= 'lazy';
-        node.properties.decoding ??= 'async';
+        if (first) {
+          node.properties.loading = 'eager';
+          node.properties.fetchpriority = 'high';
+          node.properties.decoding = 'async';
+          first = false;
+        } else {
+          node.properties.loading ??= 'lazy';
+          node.properties.decoding ??= 'async';
+        }
       }
       for (const child of node?.children ?? []) walk(child);
     };
@@ -19,6 +27,10 @@ function rehypeLazyImages() {
 export default defineConfig({
   site: 'https://ivankomissarrov.github.io',
   trailingSlash: 'always',
+  prefetch: {
+    prefetchAll: true,
+    defaultStrategy: 'hover',
+  },
   server: {
     port: 4321,
     host: true,

@@ -13,3 +13,12 @@ export async function getPublishedArticles(): Promise<Article[]> {
 export function articlePath(article: Article): string {
   return `/posts/${article.id}/`;
 }
+
+/** Smaller WebP used on cards; full JPEG stays in the post. */
+export function coverThumb(cover?: string): string | undefined {
+  if (!cover) return;
+  const file = cover.split('/').pop();
+  if (!file) return cover;
+  const stem = file.replace(/\.[^.]+$/, '');
+  return `/images/articles/thumbs/${stem}.webp`;
+}

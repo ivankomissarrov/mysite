@@ -1,3 +1,5 @@
+@import './fonts.css';
+
 :root {
   --bg: #050508;
   --bg-elevated: #0b0b12;
@@ -270,7 +272,6 @@ a {
   border-radius: var(--radius);
   padding: 1.25rem 1.3rem;
   box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.02) inset;
-  backdrop-filter: blur(16px);
   transition: border-color 0.2s, box-shadow 0.2s, background 0.2s, transform 0.2s;
 }
 
@@ -321,6 +322,8 @@ a {
   overflow: hidden;
   padding: 0 0 1.05rem;
   height: 100%;
+  content-visibility: auto;
+  contain-intrinsic-size: auto 28rem;
 }
 
 .article-card .meta,

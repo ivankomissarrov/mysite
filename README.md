@@ -40,8 +40,8 @@ tags: ['тема']
 ---
 ```
 
-3. Ниже напишите текст в Markdown. Картинки можно вставить как обычные ссылки — при `npm start` или `npm run build` скрипт `scripts/local-assets.mjs` скачает их в `public/images/articles/` и подменит адреса на локальные.
-4. Пост появится по адресу `/posts/novaya-zametka/`, на главной и в RSS.
+3. Ниже напишите текст в Markdown. Картинки можно вставить как обычные ссылки — при `npm start` или `npm run build` скрипт `scripts/local-assets.mjs` скачает их в `public/images/articles/`, сделает лёгкие превью и подменит адреса на локальные.
+4. Пост появится по адресу `/posts/novaya-zametka/`, на главной (среди свежих) и в RSS.
 
 Шрифты Unbounded и Manrope лежат в `public/fonts/` и не запрашиваются у Google. Если папку удалить, тот же скрипт скачает их снова.
 
