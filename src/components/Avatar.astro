@@ -67,11 +67,20 @@ const {
       ))
     }
   </div>
+  <span class="avatar-fx" aria-hidden="true">
+    <span class="avatar-fx-flash"></span>
+    <span class="avatar-fx-ring"></span>
+    {Array.from({ length: 10 }, (_, i) => <span class="avatar-fx-spark" style={`--i: ${i}`} />)}
+  </span>
 </button>
 
 <script>
   const STORAGE_KEY = 'ik-face-set';
   const bound = document.documentElement;
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  let currentId = '';
+  let swapTimer = 0;
+  let endTimer = 0;
 
   function setIds() {
     const root = document.querySelector('[data-avatar-cycle]');
@@ -83,6 +92,7 @@ const {
     const ids = setIds();
     const next = ids.includes(id) ? id : ids[0];
     if (!next) return;
+    currentId = next;
     document.querySelectorAll('[data-avatar-cycle]').forEach((root) => {
       if (!(root instanceof HTMLElement)) return;
       root.querySelectorAll('[data-face-set]').forEach((el) => {
@@ -96,6 +106,23 @@ const {
     });
   }
 
+  function avatars() {
+    return document.querySelectorAll('[data-avatar-cycle]');
+  }
+
+  function playMorph() {
+    avatars().forEach((root) => {
+      if (!(root instanceof HTMLElement)) return;
+      root.classList.remove('is-morphing');
+      void root.offsetWidth;
+      root.classList.add('is-morphing');
+    });
+    window.clearTimeout(endTimer);
+    endTimer = window.setTimeout(() => {
+      avatars().forEach((root) => root.classList.remove('is-morphing'));
+    }, 720);
+  }
+
   function restore() {
     apply(localStorage.getItem(STORAGE_KEY) ?? '');
   }
@@ -106,12 +133,18 @@ const {
     event.preventDefault();
     event.stopPropagation();
     const ids = setIds();
-    const active = button.querySelector('[data-face-set].is-active');
-    const current = active instanceof HTMLElement ? (active.dataset.faceSet ?? ids[0]) : ids[0];
+    const current = currentId || ids[0];
     const index = Math.max(0, ids.indexOf(current));
     const next = ids[(index + 1) % ids.length];
+    currentId = next;
     localStorage.setItem(STORAGE_KEY, next);
-    apply(next);
+    if (reduceMotion.matches) {
+      apply(next);
+      return;
+    }
+    playMorph();
+    window.clearTimeout(swapTimer);
+    swapTimer = window.setTimeout(() => apply(next), 170);
   }
 
   restore();
