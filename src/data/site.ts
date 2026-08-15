@@ -19,11 +19,12 @@ export const site = {
     ],
   },
   telegram: 'https://t.me/IvanKomissarov',
+  telegramHandle: '@IvanKomissarov',
   vk: 'https://vk.ru/ivankomissarrov',
   avatar: '/images/avatar.webp',
   nav: [],
   contacts: [
-    { href: 'https://t.me/IvanKomissarov', label: 'Telegram' },
+    { href: 'https://t.me/IvanKomissarov', label: '@IvanKomissarov' },
     { href: 'https://vk.ru/ivankomissarrov', label: 'ВКонтакте' },
   ],
 } as const;
