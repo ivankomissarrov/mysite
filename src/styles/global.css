@@ -552,7 +552,6 @@ body:has([data-face='old']:hover) .hero-avatar:not(.is-morphing) .avatar-swap {
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
   padding: 0.35rem 0;
-  transform: translateY(3px);
 }
 
 .header-phone-icon {
@@ -560,6 +559,7 @@ body:has([data-face='old']:hover) .hero-avatar:not(.is-morphing) .avatar-swap {
   height: 1.05em;
   flex-shrink: 0;
   color: #fff;
+  transform: translateY(3px);
 }
 
 .copy-toast {
