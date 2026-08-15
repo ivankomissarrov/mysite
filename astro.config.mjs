@@ -33,22 +33,22 @@ export default defineConfig({
   },
   server: {
     port: 4321,
-    host: true,
+    host: '::',
     allowedHosts: true,
   },
   preview: {
     port: 4321,
-    host: true,
+    host: '::',
     allowedHosts: true,
   },
   vite: {
     server: {
-      host: true,
+      host: '::',
       allowedHosts: true,
       strictPort: true,
     },
     preview: {
-      host: true,
+      host: '::',
       allowedHosts: true,
     },
   },
