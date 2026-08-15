@@ -274,7 +274,7 @@ body:has([data-face='old']:hover) .hero-avatar:not(.is-morphing) .avatar-swap {
   inset: -2px;
   border-radius: 50%;
   background:
-    radial-gradient(circle at 50% 45%, #fff 0%, #f5e1ff 22%, #c084fc 48%, #5ce1ff 68%, transparent 74%);
+    radial-gradient(circle at 50% 45%, #fff 0%, #f3e8ff 18%, #d8b4fe 38%, #a855f7 58%, #6d28d9 72%, transparent 78%);
   opacity: 0;
   mix-blend-mode: screen;
 }
@@ -283,11 +283,11 @@ body:has([data-face='old']:hover) .hero-avatar:not(.is-morphing) .avatar-swap {
   position: absolute;
   inset: -10px;
   border-radius: 50%;
-  border: 2px solid rgba(255, 255, 255, 0.85);
+  border: 2px solid rgba(233, 213, 255, 0.95);
   box-shadow:
-    0 0 18px rgba(168, 85, 247, 0.9),
-    0 0 28px rgba(92, 225, 255, 0.55),
-    inset 0 0 14px rgba(216, 180, 254, 0.7);
+    0 0 18px rgba(168, 85, 247, 0.95),
+    0 0 32px rgba(124, 58, 237, 0.75),
+    inset 0 0 16px rgba(216, 180, 254, 0.85);
   opacity: 0;
 }
 
@@ -299,11 +299,11 @@ body:has([data-face='old']:hover) .hero-avatar:not(.is-morphing) .avatar-swap {
   height: 7px;
   margin: -3.5px 0 0 -3.5px;
   border-radius: 50%;
-  background: #fff;
+  background: #f5e1ff;
   box-shadow:
     0 0 8px 2px #e9d5ff,
-    0 0 16px #a855f7,
-    0 0 22px #5ce1ff;
+    0 0 16px #c084fc,
+    0 0 24px #7c3aed;
   opacity: 0;
 }
 
@@ -341,7 +341,7 @@ body:has([data-face='old']:hover) .hero-avatar:not(.is-morphing) .avatar-swap {
   }
   28% {
     transform: scale(0.42) rotate(14deg);
-    filter: brightness(3.2) saturate(0.35) blur(2px) drop-shadow(3px 0 #f0abfc) drop-shadow(-3px 0 #67e8f9);
+    filter: brightness(3.2) saturate(0.45) blur(2px) drop-shadow(3px 0 #e9d5ff) drop-shadow(-3px 0 #a855f7);
   }
   46% {
     transform: scale(1.12) rotate(-5deg);
