@@ -154,16 +154,11 @@ a {
   border-radius: 50%;
   padding: 3px;
   position: relative;
-  overflow: visible;
   cursor: pointer;
   background: linear-gradient(145deg, #e9d5ff 0%, #7c3aed 48%, #5ce1ff 100%);
   box-shadow:
     0 0 0 8px rgba(181, 107, 255, 0.08),
     0 0 48px rgba(124, 58, 237, 0.4);
-}
-
-.hero-avatar.is-morphing {
-  z-index: 4;
 }
 
 .hero-avatar-sm {
@@ -194,6 +189,8 @@ a {
   height: 100%;
   border-radius: 50%;
   overflow: hidden;
+  isolation: isolate;
+  clip-path: circle(50%);
 }
 
 .avatar-swap .face {
@@ -257,12 +254,9 @@ body:has([data-face='old']:hover) .hero-avatar:not(.is-morphing) .avatar-swap {
   position: absolute;
   inset: 0;
   border-radius: 50%;
+  overflow: hidden;
   pointer-events: none;
   z-index: 3;
-}
-
-.hero-avatar .avatar-fx {
-  inset: 3px;
 }
 
 .brand-avatar .avatar-fx {
@@ -271,7 +265,7 @@ body:has([data-face='old']:hover) .hero-avatar:not(.is-morphing) .avatar-swap {
 
 .avatar-fx-flash {
   position: absolute;
-  inset: -2px;
+  inset: 0;
   border-radius: 50%;
   background:
     radial-gradient(circle at 50% 45%, #fff 0%, #f3e8ff 18%, #d8b4fe 38%, #a855f7 58%, #6d28d9 72%, transparent 78%);
@@ -281,12 +275,12 @@ body:has([data-face='old']:hover) .hero-avatar:not(.is-morphing) .avatar-swap {
 
 .avatar-fx-ring {
   position: absolute;
-  inset: -10px;
+  inset: 8px;
   border-radius: 50%;
   border: 2px solid rgba(233, 213, 255, 0.95);
   box-shadow:
     0 0 18px rgba(168, 85, 247, 0.95),
-    0 0 32px rgba(124, 58, 237, 0.75),
+    0 0 24px rgba(124, 58, 237, 0.75),
     inset 0 0 16px rgba(216, 180, 254, 0.85);
   opacity: 0;
 }
@@ -312,7 +306,7 @@ body:has([data-face='old']:hover) .hero-avatar:not(.is-morphing) .avatar-swap {
   display: none;
 }
 
-.hero-avatar.is-morphing .avatar-swap {
+.hero-avatar.is-morphing .avatar-set {
   animation: avatar-transmute 0.7s cubic-bezier(0.18, 0.72, 0.22, 1);
 }
 
@@ -343,7 +337,7 @@ body:has([data-face='old']:hover) .hero-avatar:not(.is-morphing) .avatar-swap {
     filter: brightness(3.2) saturate(0.45) blur(2px) drop-shadow(3px 0 #e9d5ff) drop-shadow(-3px 0 #a855f7);
   }
   46% {
-    transform: scale(1.12) rotate(-5deg);
+    transform: scale(1.08) rotate(-5deg);
     filter: brightness(1.7) saturate(1.35);
   }
   100% {
@@ -359,7 +353,7 @@ body:has([data-face='old']:hover) .hero-avatar:not(.is-morphing) .avatar-swap {
   }
   22% {
     opacity: 1;
-    transform: scale(1.02);
+    transform: scale(1);
   }
   42% {
     opacity: 0.92;
@@ -367,22 +361,22 @@ body:has([data-face='old']:hover) .hero-avatar:not(.is-morphing) .avatar-swap {
   }
   100% {
     opacity: 0;
-    transform: scale(1.28);
+    transform: scale(1);
   }
 }
 
 @keyframes avatar-shockwave {
   0% {
     opacity: 0;
-    transform: scale(0.62);
+    transform: scale(0.55);
   }
   18% {
     opacity: 1;
-    transform: scale(0.92);
+    transform: scale(0.82);
   }
   100% {
     opacity: 0;
-    transform: scale(1.55);
+    transform: scale(1);
   }
 }
 
@@ -393,18 +387,18 @@ body:has([data-face='old']:hover) .hero-avatar:not(.is-morphing) .avatar-swap {
   }
   18% {
     opacity: 1;
-    transform: rotate(calc(var(--i) * 36deg)) translateY(-18px) scale(1);
+    transform: rotate(calc(var(--i) * 36deg)) translateY(-16px) scale(1);
   }
   100% {
     opacity: 0;
-    transform: rotate(calc(var(--i) * 36deg)) translateY(-108px) scale(0.15);
+    transform: rotate(calc(var(--i) * 36deg)) translateY(-62px) scale(0.2);
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
   body:has([data-face='smile']:hover) .hero-avatar .avatar-swap,
   body:has([data-face='old']:hover) .hero-avatar .avatar-swap,
-  .hero-avatar.is-morphing .avatar-swap,
+  .hero-avatar.is-morphing .avatar-set,
   .hero-avatar.is-morphing .avatar-fx-flash,
   .hero-avatar.is-morphing .avatar-fx-ring,
   .hero-avatar.is-morphing .avatar-fx-spark {

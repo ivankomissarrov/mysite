@@ -83,12 +83,12 @@ const {
         </div>
       ))
     }
+    <span class="avatar-fx" aria-hidden="true">
+      <span class="avatar-fx-flash"></span>
+      <span class="avatar-fx-ring"></span>
+      {Array.from({ length: 10 }, (_, i) => <span class="avatar-fx-spark" style={`--i: ${i}`} />)}
+    </span>
   </div>
-  <span class="avatar-fx" aria-hidden="true">
-    <span class="avatar-fx-flash"></span>
-    <span class="avatar-fx-ring"></span>
-    {Array.from({ length: 10 }, (_, i) => <span class="avatar-fx-spark" style={`--i: ${i}`} />)}
-  </span>
 </button>
   )
 }
