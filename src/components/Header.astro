@@ -7,10 +7,10 @@ const path = Astro.url.pathname;
 
 <header class="site-header">
   <div class="wrap header-inner">
-    <a class="brand" href="/">
+    <div class="brand">
       <Avatar class="brand-avatar" size={38} decorative />
-      <span>{site.name}</span>
-    </a>
+      <a class="brand-name" href="/">{site.name}</a>
+    </div>
     {
       site.nav.length > 0 && (
         <nav class="nav" aria-label="Основное меню">

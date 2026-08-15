@@ -8,7 +8,13 @@ import { site } from '../data/site';
     <p class="footer-links">
       {
         site.contacts.map((item) => (
-          <a class="muted-link" href={item.href} target="_blank" rel="noopener noreferrer">
+          <a
+            class="muted-link"
+            href={item.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            data-face={item.href.startsWith('https://t.me/') ? 'smile' : undefined}
+          >
             {item.label}
           </a>
         ))
