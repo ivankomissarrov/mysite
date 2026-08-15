@@ -559,7 +559,7 @@ body:has([data-face='old']:hover) .hero-avatar:not(.is-morphing) .avatar-swap {
   height: 1.05em;
   flex-shrink: 0;
   color: #fff;
-  transform: translateY(3px);
+  transform: translateY(2px);
 }
 
 .copy-toast {
