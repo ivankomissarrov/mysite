@@ -24,7 +24,7 @@ export const site = {
   avatar: '/images/avatar.webp',
   nav: [],
   contacts: [
-    { href: 'https://t.me/IvanKomissarrov', label: '@IvanKomissarrov' },
+    { href: 'https://t.me/IvanKomissarrov', label: 'Telegram' },
     { href: 'https://vk.ru/ivankomissarrov', label: 'ВКонтакте' },
   ],
 } as const;
