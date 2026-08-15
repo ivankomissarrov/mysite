@@ -108,7 +108,7 @@ const menuId = 'messenger-menu';
     window.setTimeout(() => toast.classList.remove('is-on'), 2200);
   }
 
-  if (document.documentElement.hasAttribute('data-messenger-bound')) return;
+  if (!document.documentElement.hasAttribute('data-messenger-bound')) {
   document.documentElement.setAttribute('data-messenger-bound', '');
 
   document.addEventListener('click', async (event) => {
@@ -143,4 +143,5 @@ const menuId = 'messenger-menu';
   document.addEventListener('keydown', (event) => {
     if (event.key === 'Escape') closeAll(null);
   });
+  }
 </script>
