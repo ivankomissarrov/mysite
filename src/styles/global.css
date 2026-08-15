@@ -349,14 +349,32 @@ a {
 .meta {
   display: flex;
   gap: 0.7rem;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+  align-items: baseline;
   color: var(--text-dim);
   font-size: 0.82rem;
   margin-bottom: 0.55rem;
 }
 
+.meta time {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+  min-width: 0;
+  flex: 1;
+  line-height: 1.35;
+  max-height: 1.35em;
+  overflow: hidden;
+}
+
 .tag {
   color: var(--cyan);
+  white-space: nowrap;
 }
 
 .article-list {

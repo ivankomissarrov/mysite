@@ -59,7 +59,15 @@ const articleLd = {
     <header class="article-header">
       <div class="meta">
         <time datetime={published}>{formatted}</time>
-        {article.data.tags.map((tag) => <span class="tag">#{tag}</span>)}
+        {
+          article.data.tags.length > 0 && (
+            <span class="tags">
+              {article.data.tags.map((tag) => (
+                <span class="tag">#{tag}</span>
+              ))}
+            </span>
+          )
+        }
       </div>
       <h1>{article.data.title}</h1>
       <p class="lede" style="margin-inline: 0;">{article.data.description}</p>

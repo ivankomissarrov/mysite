@@ -36,7 +36,15 @@ const thumb = coverThumb(cover);
   }
   <div class="meta">
     <time datetime={date.toISOString()}>{formatted}</time>
-    {tags.slice(0, 3).map((tag) => <span class="tag">#{tag}</span>)}
+    {
+      tags.length > 0 && (
+        <span class="tags">
+          {tags.slice(0, 3).map((tag) => (
+            <span class="tag">#{tag}</span>
+          ))}
+        </span>
+      )
+    }
   </div>
   <h3>{title}</h3>
   <p class="card-excerpt">{description}</p>
