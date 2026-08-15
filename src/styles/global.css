@@ -271,7 +271,7 @@ a {
 }
 
 .btn-primary {
-  background: linear-gradient(180deg, #c084fc, #7c3aed);
+  background: linear-gradient(180deg, #a855f7, #6d28d9);
   color: #fff;
   box-shadow: var(--shadow-glow);
 }
