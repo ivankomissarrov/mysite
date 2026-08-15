@@ -33,22 +33,26 @@ export default defineConfig({
   },
   server: {
     port: 4321,
-    host: '::',
+    host: '0.0.0.0',
     allowedHosts: true,
   },
   preview: {
     port: 4321,
-    host: '::',
+    host: '0.0.0.0',
     allowedHosts: true,
   },
   vite: {
     server: {
-      host: '::',
+      host: '0.0.0.0',
       allowedHosts: true,
       strictPort: true,
+      hmr: {
+        host: '127.0.0.1',
+        clientPort: 4321,
+      },
     },
     preview: {
-      host: '::',
+      host: '0.0.0.0',
       allowedHosts: true,
     },
   },
