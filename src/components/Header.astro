@@ -25,11 +25,11 @@ const path = Astro.url.pathname;
     }
     <a
       class="btn btn-primary btn-compact"
-      href={site.telegram}
+      href={site.cta.order.href}
       target="_blank"
       rel="noopener noreferrer"
     >
-      Написать в Telegram
+      {site.cta.order.label}
     </a>
   </div>
 </header>

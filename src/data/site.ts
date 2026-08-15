@@ -23,6 +23,10 @@ export const site = {
   vk: 'https://vk.ru/ivankomissarrov',
   avatar: '/images/avatar.webp',
   nav: [],
+  cta: {
+    order: { href: 'https://t.me/IvanKomissarrov', label: 'Рассчитать заказ' },
+    work: { href: '/about/', label: 'Портфолио и опыт' },
+  },
   contacts: [
     { href: 'https://t.me/IvanKomissarrov', label: 'Telegram' },
     { href: 'https://vk.ru/ivankomissarrov', label: 'ВКонтакте' },

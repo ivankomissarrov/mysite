@@ -4,22 +4,22 @@ import { site } from '../data/site';
 ---
 
 <BaseLayout
-  title="Обо мне"
+  title="Портфолио и опыт"
   description="Иван Комиссаров — игропрактик и геймдизайнер: образовательные игры, курсы, Граникон и Гильдия разработчиков настольных игр."
 >
   <section class="page-hero wrap">
     <div class="hero-avatar hero-avatar-sm">
       <img src={site.avatar} alt={site.name} width="128" height="128" />
     </div>
-    <p class="hero-kicker">Обо мне</p>
+    <p class="hero-kicker">Портфолио и опыт</p>
     <h1 class="page-title">
       {site.name}
       <br />
       <span class="gradient-text">Игропрактик и геймдизайнер</span>
     </h1>
     <div class="actions">
-      <a class="btn btn-primary" href={site.telegram} target="_blank" rel="noopener noreferrer">
-        Написать в Telegram
+      <a class="btn btn-primary" href={site.cta.order.href} target="_blank" rel="noopener noreferrer">
+        {site.cta.order.label}
       </a>
     </div>
   </section>
