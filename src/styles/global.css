@@ -193,8 +193,8 @@ body:has([data-face='old']:hover) .face-default {
   opacity: 0;
 }
 
-body:has([data-face='smile']:hover) .avatar-swap,
-body:has([data-face='old']:hover) .avatar-swap {
+body:has([data-face='smile']:hover) .hero-avatar .avatar-swap,
+body:has([data-face='old']:hover) .hero-avatar .avatar-swap {
   animation: avatar-nudge 0.55s ease-in-out;
 }
 
@@ -218,8 +218,8 @@ body:has([data-face='old']:hover) .avatar-swap {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  body:has([data-face='smile']:hover) .avatar-swap,
-  body:has([data-face='old']:hover) .avatar-swap {
+  body:has([data-face='smile']:hover) .hero-avatar .avatar-swap,
+  body:has([data-face='old']:hover) .hero-avatar .avatar-swap {
     animation: none;
   }
 }
