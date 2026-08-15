@@ -3,6 +3,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import ArticleGrid from '../components/ArticleGrid.astro';
 import Avatar from '../components/Avatar.astro';
 import Partners from '../components/Partners.astro';
+import MessengerCta from '../components/MessengerCta.astro';
 import { site } from '../data/site';
 ---
 
@@ -23,15 +24,7 @@ import { site } from '../data/site';
       Давайте превратим их в игру, в которую действительно захочется играть!
     </p>
     <div class="actions">
-      <a
-        class="btn btn-primary"
-        href={site.cta.write.href}
-        data-face="smile"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        {site.cta.write.label}
-      </a>
+      <MessengerCta />
       <a
         class="btn btn-ghost"
         href={site.cta.order.href}

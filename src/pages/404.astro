@@ -1,6 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { site } from '../data/site';
+import MessengerCta from '../components/MessengerCta.astro';
 ---
 
 <BaseLayout title="Страница не найдена" description="Такой страницы нет. Вернитесь на главную.">
@@ -14,9 +14,7 @@ import { site } from '../data/site';
     <p class="lede">Адрес мог измениться или в ссылке опечатка.</p>
     <div class="actions">
       <a class="btn btn-primary" href="/">На главную</a>
-      <a class="btn btn-ghost" href={site.cta.write.href} data-face="smile" target="_blank" rel="noopener noreferrer">
-        {site.cta.write.label}
-      </a>
+      <MessengerCta variant="ghost" />
     </div>
   </section>
 </BaseLayout>

@@ -2,6 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Avatar from '../components/Avatar.astro';
 import Partners from '../components/Partners.astro';
+import MessengerCta from '../components/MessengerCta.astro';
 import { site } from '../data/site';
 ---
 
@@ -18,9 +19,7 @@ import { site } from '../data/site';
       <span class="gradient-text">Игропрактик и геймдизайнер</span>
     </h1>
     <div class="actions">
-      <a class="btn btn-primary" href={site.cta.write.href} data-face="smile" target="_blank" rel="noopener noreferrer">
-        {site.cta.write.label}
-      </a>
+      <MessengerCta />
     </div>
   </section>
 

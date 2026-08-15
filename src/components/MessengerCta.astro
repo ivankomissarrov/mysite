@@ -1,0 +1,146 @@
+---
+import { site } from '../data/site';
+
+interface Props {
+  variant?: 'primary' | 'ghost';
+}
+
+const { variant = 'primary' } = Astro.props;
+const menuId = 'messenger-menu';
+---
+
+<div class="messenger-cta" data-messenger-cta>
+  <button
+    type="button"
+    class:list={['btn', variant === 'ghost' ? 'btn-ghost' : 'btn-primary']}
+    data-messenger-toggle
+    data-face="smile"
+    aria-expanded="false"
+    aria-controls={menuId}
+    aria-haspopup="menu"
+  >
+    {site.cta.write.label}
+  </button>
+  <ul class="messenger-menu" id={menuId} role="menu" hidden>
+    {
+      site.messengers.map((item) => (
+        <li role="none">
+          <a
+            class={`messenger-option messenger-option--${item.id}`}
+            href={item.href}
+            role="menuitem"
+            target="_blank"
+            rel="noopener noreferrer"
+            data-face="smile"
+            {...('copyPhone' in item && item.copyPhone ? { 'data-copy-max-phone': site.phone } : {})}
+          >
+            <span class="messenger-option-mark" aria-hidden="true">
+              {item.id === 'vk' && (
+                <svg viewBox="0 0 24 24" width="20" height="20">
+                  <path
+                    fill="currentColor"
+                    d="M4.5 7.4h2.1c.1 3.2 1.5 5.1 3.4 6.1V7.4h2v3.5c1.9-.2 3.8-2 4.5-3.5h2c-.8 2.1-2.8 4-4.3 4.7 1.6.6 3.8 2.3 4.7 5.2h-2.2c-.7-2.2-2.5-3.9-4.7-4.2v4.2h-2V13.4c-1.9.1-4.1 1.8-4.8 4.3H3.2c1.1-3.3 3.8-5.2 5.8-5.8-1.7-.8-3.3-2.6-3.5-4.5Z"
+                  />
+                </svg>
+              )}
+              {item.id === 'telegram' && (
+                <svg viewBox="0 0 24 24" width="20" height="20">
+                  <path
+                    fill="currentColor"
+                    d="M20.7 4.6 3.4 11.2c-1.2.5-1.2 1.2-.2 1.5l4.4 1.4 10.2-6.4c.5-.3.9-.1.6.2l-8.2 7.4-.3 4.5c.5 0 .7-.2 1-.5l2.3-2.2 4.8 3.5c.9.5 1.5.2 1.7-.8l3.1-14.6c.3-1.3-.5-1.9-1.4-1.6Z"
+                  />
+                </svg>
+              )}
+              {item.id === 'max' && (
+                <svg viewBox="0 0 24 24" width="20" height="20">
+                  <path
+                    fill="currentColor"
+                    d="M6.2 17.5 4 6.5h3.1l1.5 7.4 2.4-5.6h2l2.4 5.6 1.5-7.4H20l-2.2 11H14.6L12 11.4 9.4 17.5H6.2Z"
+                  />
+                </svg>
+              )}
+            </span>
+            <span class="messenger-option-text">
+              <span class="messenger-option-name">{item.name}</span>
+              <span class="messenger-option-note">{item.note}</span>
+            </span>
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</div>
+
+<script>
+  function closeAll(except) {
+    document.querySelectorAll('[data-messenger-cta]').forEach((root) => {
+      if (root === except) return;
+      root.classList.remove('is-open');
+      const toggle = root.querySelector('[data-messenger-toggle]');
+      const menu = root.querySelector('.messenger-menu');
+      if (toggle instanceof HTMLElement) toggle.setAttribute('aria-expanded', 'false');
+      if (menu instanceof HTMLElement) menu.hidden = true;
+    });
+  }
+
+  async function copyText(text) {
+    try {
+      await navigator.clipboard.writeText(text);
+      return true;
+    } catch {
+      const field = document.createElement('textarea');
+      field.value = text;
+      field.setAttribute('readonly', '');
+      field.style.position = 'fixed';
+      field.style.left = '-9999px';
+      document.body.appendChild(field);
+      field.select();
+      const ok = document.execCommand('copy');
+      field.remove();
+      return ok;
+    }
+  }
+
+  function showCopied() {
+    const toast = document.querySelector('[data-copy-toast]');
+    if (!(toast instanceof HTMLElement)) return;
+    toast.classList.add('is-on');
+    window.setTimeout(() => toast.classList.remove('is-on'), 2200);
+  }
+
+  if (document.documentElement.hasAttribute('data-messenger-bound')) return;
+  document.documentElement.setAttribute('data-messenger-bound', '');
+
+  document.addEventListener('click', async (event) => {
+    const target = event.target instanceof Element ? event.target : null;
+    const toggle = target?.closest('[data-messenger-toggle]');
+    const root = target?.closest('[data-messenger-cta]');
+    const maxLink = target?.closest('[data-copy-max-phone]');
+
+    if (maxLink instanceof HTMLAnchorElement) {
+      const phone = maxLink.getAttribute('data-copy-max-phone') ?? '';
+      if (phone && (await copyText(phone))) showCopied();
+    }
+
+    if (target?.closest('.messenger-option')) {
+      closeAll(null);
+      return;
+    }
+
+    if (toggle instanceof HTMLElement && root instanceof HTMLElement) {
+      const willOpen = !root.classList.contains('is-open');
+      closeAll(willOpen ? root : null);
+      root.classList.toggle('is-open', willOpen);
+      toggle.setAttribute('aria-expanded', String(willOpen));
+      const menu = root.querySelector('.messenger-menu');
+      if (menu instanceof HTMLElement) menu.hidden = !willOpen;
+      return;
+    }
+
+    if (!root) closeAll(null);
+  });
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') closeAll(null);
+  });
+</script>

@@ -79,10 +79,15 @@ export const site = {
   ],
   nav: [],
   cta: {
-    write: { href: 'https://t.me/IvanKomissarrov', label: 'Написать в Telegram' },
+    write: { href: '#messengers', label: 'Написать в мессенджере' },
     order: { href: 'https://t.me/IvanKomissarrov', label: 'Рассчитать заказ' },
     work: { href: '/about/', label: 'Портфолио и опыт' },
   },
+  messengers: [
+    { id: 'vk', name: 'ВКонтакте', href: 'https://vk.ru/ivankomissarrov', note: 'vk.ru/ivankomissarrov' },
+    { id: 'telegram', name: 'Telegram', href: 'https://t.me/IvanKomissarrov', note: '@IvanKomissarrov' },
+    { id: 'max', name: 'Макс', href: 'https://web.max.ru/', note: '8 925 235 56 12', copyPhone: true },
+  ],
   contacts: [
     { href: 'https://t.me/IvanKomissarrov', label: 'Telegram' },
     { href: 'https://vk.ru/ivankomissarrov', label: 'ВКонтакте' },
