@@ -32,7 +32,6 @@ const menuId = 'messenger-menu';
             target="_blank"
             rel="noopener noreferrer"
             data-face="smile"
-            {...('copyPhone' in item && item.copyPhone ? { 'data-copy-max-phone': site.phone } : {})}
           >
             <span class="messenger-option-mark" aria-hidden="true">
               {item.id === 'vk' && (
@@ -83,44 +82,13 @@ const menuId = 'messenger-menu';
     });
   }
 
-  async function copyText(text) {
-    try {
-      await navigator.clipboard.writeText(text);
-      return true;
-    } catch {
-      const field = document.createElement('textarea');
-      field.value = text;
-      field.setAttribute('readonly', '');
-      field.style.position = 'fixed';
-      field.style.left = '-9999px';
-      document.body.appendChild(field);
-      field.select();
-      const ok = document.execCommand('copy');
-      field.remove();
-      return ok;
-    }
-  }
-
-  function showCopied() {
-    const toast = document.querySelector('[data-copy-toast]');
-    if (!(toast instanceof HTMLElement)) return;
-    toast.classList.add('is-on');
-    window.setTimeout(() => toast.classList.remove('is-on'), 2200);
-  }
-
   if (!document.documentElement.hasAttribute('data-messenger-bound')) {
   document.documentElement.setAttribute('data-messenger-bound', '');
 
-  document.addEventListener('click', async (event) => {
+  document.addEventListener('click', (event) => {
     const target = event.target instanceof Element ? event.target : null;
     const toggle = target?.closest('[data-messenger-toggle]');
     const root = target?.closest('[data-messenger-cta]');
-    const maxLink = target?.closest('[data-copy-max-phone]');
-
-    if (maxLink instanceof HTMLAnchorElement) {
-      const phone = maxLink.getAttribute('data-copy-max-phone') ?? '';
-      if (phone && (await copyText(phone))) showCopied();
-    }
 
     if (target?.closest('.messenger-option')) {
       closeAll(null);

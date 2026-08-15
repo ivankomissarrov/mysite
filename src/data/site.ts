@@ -86,7 +86,7 @@ export const site = {
   messengers: [
     { id: 'vk', name: 'ВКонтакте', href: 'https://vk.ru/ivankomissarrov', note: 'vk.ru/ivankomissarrov' },
     { id: 'telegram', name: 'Telegram', href: 'https://t.me/IvanKomissarrov', note: '@IvanKomissarrov' },
-    { id: 'max', name: 'Макс', href: 'https://web.max.ru/', note: '8 925 235 56 12', copyPhone: true },
+    { id: 'max', name: 'Макс', href: 'https://max.ru/u/f9LHodD0cOIacvQRw_4sc_Vytab9DUJToOfdGK906C0Uis0W8mH7hHZPN38', note: 'max.ru' },
   ],
   contacts: [
     { href: 'https://t.me/IvanKomissarrov', label: 'Telegram' },
