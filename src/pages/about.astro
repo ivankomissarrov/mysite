@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import Avatar from '../components/Avatar.astro';
 import { site } from '../data/site';
 ---
 
@@ -8,9 +9,7 @@ import { site } from '../data/site';
   description="Иван Комиссаров — игропрактик и геймдизайнер: образовательные игры, курсы, Граникон и Гильдия разработчиков настольных игр."
 >
   <section class="page-hero wrap">
-    <div class="hero-avatar hero-avatar-sm">
-      <img src={site.avatar} alt={site.name} width="128" height="128" />
-    </div>
+    <Avatar class="hero-avatar hero-avatar-sm" size={128} alt={site.name} />
     <p class="hero-kicker">Портфолио и опыт</p>
     <h1 class="page-title">
       {site.name}
@@ -18,7 +17,7 @@ import { site } from '../data/site';
       <span class="gradient-text">Игропрактик и геймдизайнер</span>
     </h1>
     <div class="actions">
-      <a class="btn btn-primary" href={site.cta.write.href} target="_blank" rel="noopener noreferrer">
+      <a class="btn btn-primary" href={site.cta.write.href} data-face="smile" target="_blank" rel="noopener noreferrer">
         {site.cta.write.label}
       </a>
     </div>

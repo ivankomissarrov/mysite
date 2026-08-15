@@ -1,5 +1,6 @@
 ---
 import { site } from '../data/site';
+import Avatar from './Avatar.astro';
 
 const path = Astro.url.pathname;
 ---
@@ -7,9 +8,7 @@ const path = Astro.url.pathname;
 <header class="site-header">
   <div class="wrap header-inner">
     <a class="brand" href="/">
-      <span class="brand-avatar" aria-hidden="true">
-        <img src={site.avatar} alt="" width="38" height="38" />
-      </span>
+      <Avatar class="brand-avatar" size={38} decorative />
       <span>{site.name}</span>
     </a>
     {
@@ -26,6 +25,7 @@ const path = Astro.url.pathname;
     <a
       class="btn btn-primary btn-compact"
       href={site.cta.write.href}
+      data-face="smile"
       target="_blank"
       rel="noopener noreferrer"
     >

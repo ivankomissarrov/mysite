@@ -1,0 +1,32 @@
+---
+import { site } from '../data/site';
+
+interface Props {
+  class?: string;
+  size?: number;
+  alt?: string;
+  priority?: boolean;
+  decorative?: boolean;
+}
+
+const {
+  class: className = 'hero-avatar',
+  size = 168,
+  alt = '',
+  priority = false,
+  decorative = false,
+} = Astro.props;
+---
+
+<div class:list={[className, 'avatar-swap']} aria-hidden={decorative ? 'true' : undefined}>
+  <img
+    class="face face-default"
+    src={site.avatar}
+    alt={alt}
+    width={size}
+    height={size}
+    fetchpriority={priority ? 'high' : undefined}
+  />
+  <img class="face face-smile" src={site.avatarSmile} alt="" width={size} height={size} aria-hidden="true" />
+  <img class="face face-old" src={site.avatarOld} alt="" width={size} height={size} aria-hidden="true" />
+</div>

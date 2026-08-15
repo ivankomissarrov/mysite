@@ -22,6 +22,8 @@ export const site = {
   telegramHandle: '@IvanKomissarrov',
   vk: 'https://vk.ru/ivankomissarrov',
   avatar: '/images/avatar.webp',
+  avatarSmile: '/images/smile.webp',
+  avatarOld: '/images/old.webp',
   nav: [],
   cta: {
     write: { href: 'https://t.me/IvanKomissarrov', label: 'Написать в Telegram' },

@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ArticleGrid from '../components/ArticleGrid.astro';
+import Avatar from '../components/Avatar.astro';
 import { site } from '../data/site';
 ---
 
@@ -8,15 +9,7 @@ import { site } from '../data/site';
   <section class="hero wrap">
     <span class="glow-orb" style="top: -40px; left: 8%;"></span>
     <span class="glow-orb" style="right: 6%; top: 40px; background: radial-gradient(circle, rgba(92,225,255,.22), transparent 68%);"></span>
-    <div class="hero-avatar">
-      <img
-        src={site.avatar}
-        alt={site.name}
-        width="168"
-        height="168"
-        fetchpriority="high"
-      />
-    </div>
+    <Avatar class="hero-avatar" size={168} alt={site.name} priority />
     <p class="hero-kicker">Игропрактика и геймдизайн</p>
     <h1>
       {site.name}
@@ -28,13 +21,25 @@ import { site } from '../data/site';
       в игру, в которую действительно захочется играть!
     </p>
     <div class="actions">
-      <a class="btn btn-primary" href={site.cta.write.href} target="_blank" rel="noopener noreferrer">
+      <a
+        class="btn btn-primary"
+        href={site.cta.write.href}
+        data-face="smile"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
         {site.cta.write.label}
       </a>
-      <a class="btn btn-ghost" href={site.cta.order.href} target="_blank" rel="noopener noreferrer">
+      <a
+        class="btn btn-ghost"
+        href={site.cta.order.href}
+        data-face="smile"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
         {site.cta.order.label}
       </a>
-      <a class="btn btn-ghost" href={site.cta.work.href}>
+      <a class="btn btn-ghost" href={site.cta.work.href} data-face="old">
         {site.cta.work.label}
       </a>
     </div>
