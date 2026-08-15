@@ -524,6 +524,24 @@ body:has([data-face='old']:hover) .hero-avatar:not(.is-morphing) .avatar-swap {
   display: none;
 }
 
+.messenger-item--mobile {
+  display: none;
+}
+
+@media (max-width: 860px) {
+  .messenger-item--mobile {
+    display: list-item;
+  }
+}
+
+.messenger-item--mobile[hidden] {
+  display: none !important;
+}
+
+html.is-mobile .messenger-item--mobile:not([hidden]) {
+  display: list-item;
+}
+
 .messenger-option {
   display: flex;
   align-items: center;

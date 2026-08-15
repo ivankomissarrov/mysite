@@ -24,14 +24,18 @@ const menuId = 'messenger-menu';
   <ul class="messenger-menu" id={menuId} role="menu" hidden>
     {
       site.messengers.map((item) => (
-        <li role="none">
+        <li
+          class:list={['messenger-item', { 'messenger-item--mobile': 'mobileOnly' in item && item.mobileOnly }]}
+          role="none"
+        >
           <a
             class={`messenger-option messenger-option--${item.id}`}
             href={item.href}
             role="menuitem"
-            target="_blank"
-            rel="noopener noreferrer"
+            target={item.id === 'max' ? '_self' : '_blank'}
+            rel={item.id === 'max' ? undefined : 'noopener noreferrer'}
             data-face="smile"
+            data-max-app={item.id === 'max' ? item.href : undefined}
           >
             <span class="messenger-option-mark" aria-hidden="true">
               {item.id === 'vk' && (
@@ -82,8 +86,42 @@ const menuId = 'messenger-menu';
     });
   }
 
+  function isMobileDevice() {
+    const uaData = navigator.userAgentData;
+    if (uaData?.mobile) return true;
+    return /Mobi|Android|iPhone|iPod|iPad/i.test(navigator.userAgent);
+  }
+
+  function prepareMaxLinks() {
+    const mobile = isMobileDevice();
+    document.documentElement.classList.toggle('is-mobile', mobile);
+    document.querySelectorAll('.messenger-item--mobile').forEach((item) => {
+      if (item instanceof HTMLElement) item.hidden = !mobile;
+    });
+
+    document.querySelectorAll('[data-max-app]').forEach((link) => {
+      if (!(link instanceof HTMLAnchorElement)) return;
+      const web = link.getAttribute('data-max-app');
+      if (!web) return;
+      try {
+        const url = new URL(web);
+        if (/Android/i.test(navigator.userAgent)) {
+          link.href = `intent://${url.pathname.replace(/^\//, '')}#Intent;scheme=https;host=${url.host};package=ru.oneme.app;S.browser_fallback_url=${encodeURIComponent(web)};end`;
+        } else {
+          link.href = web;
+        }
+      } catch {
+        link.href = web;
+      }
+      link.target = '_self';
+      link.removeAttribute('rel');
+    });
+  }
+
   if (!document.documentElement.hasAttribute('data-messenger-bound')) {
   document.documentElement.setAttribute('data-messenger-bound', '');
+  prepareMaxLinks();
+  document.addEventListener('astro:page-load', prepareMaxLinks);
 
   document.addEventListener('click', (event) => {
     const target = event.target instanceof Element ? event.target : null;
