@@ -88,9 +88,9 @@ export const site = {
     { id: 'telegram', name: 'Telegram', href: 'https://t.me/IvanKomissarrov', note: '@IvanKomissarrov' },
     {
       id: 'max',
-      name: 'Макс',
+      name: 'MAX',
       href: 'max://max.ru/u/f9LHodD0cOIacvQRw_4sc_Vytab9DUJToOfdGK906C0Uis0W8mH7hHZPN38',
-      note: 'откроется приложение',
+      note: '8 925 235 56 12',
       mobileOnly: true,
     },
   ],
