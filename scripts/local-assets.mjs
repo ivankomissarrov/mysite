@@ -273,9 +273,22 @@ async function ensureAvatar() {
     else console.log('avatar: missing public/images/avatar.jpg');
     return;
   }
+
+  const meta = await sharp(src, { failOn: 'none' }).rotate().metadata();
+  const width = meta.width ?? 512;
+  const height = meta.height ?? 512;
+  const zoom = 1.42;
+  const size = Math.max(1, Math.round(Math.min(width, height) / zoom));
+  const left = Math.min(
+    Math.max(0, Math.round((width - size) / 2) - Math.round(width * 0.03)),
+    width - size,
+  );
+  const top = Math.min(Math.max(0, Math.round((height - size) * 0.05)), height - size);
+
   await sharp(src, { failOn: 'none' })
     .rotate()
-    .resize({ width: 512, height: 512, fit: 'cover', position: 'centre' })
+    .extract({ left, top, width: size, height: size })
+    .resize(512, 512)
     .webp({ quality: 82 })
     .toFile(dest);
   console.log('avatar: wrote avatar.webp');
