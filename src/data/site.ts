@@ -87,6 +87,7 @@ export const site = {
     { href: 'https://t.me/IvanKomissarrov', label: 'Telegram' },
     { href: 'https://vk.ru/ivankomissarrov', label: 'ВКонтакте' },
   ],
+  showPartners: false,
   partners: [
     { id: 'prosveshchenie', name: 'ГК «Просвещение»', src: '/images/partners/prosveshchenie.svg', width: 159, height: 62 },
     { id: 'rosmolodezh', name: 'Росмолодёжь', src: '/images/partners/rosmolodezh.webp', width: 1100, height: 183 },
