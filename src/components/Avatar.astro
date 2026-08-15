@@ -7,6 +7,7 @@ interface Props {
   alt?: string;
   priority?: boolean;
   decorative?: boolean;
+  plain?: boolean;
 }
 
 const {
@@ -15,9 +16,25 @@ const {
   alt = '',
   priority = false,
   decorative = false,
+  plain = false,
 } = Astro.props;
 ---
 
+{
+  plain ? (
+    <div class={className} aria-hidden={decorative ? 'true' : undefined}>
+      <div class="avatar-swap">
+        <img
+          class="face face-default"
+          src={site.avatar}
+          alt={decorative ? '' : alt}
+          width={size}
+          height={size}
+          decoding="async"
+        />
+      </div>
+    </div>
+  ) : (
 <button
   class={className}
   type="button"
@@ -73,6 +90,8 @@ const {
     {Array.from({ length: 10 }, (_, i) => <span class="avatar-fx-spark" style={`--i: ${i}`} />)}
   </span>
 </button>
+  )
+}
 
 <script>
   const STORAGE_KEY = 'ik-face-set';
@@ -106,12 +125,8 @@ const {
     });
   }
 
-  function avatars() {
-    return document.querySelectorAll('[data-avatar-cycle]');
-  }
-
   function playMorph() {
-    avatars().forEach((root) => {
+    document.querySelectorAll('.hero-avatar[data-avatar-cycle]').forEach((root) => {
       if (!(root instanceof HTMLElement)) return;
       root.classList.remove('is-morphing');
       void root.offsetWidth;
@@ -119,7 +134,9 @@ const {
     });
     window.clearTimeout(endTimer);
     endTimer = window.setTimeout(() => {
-      avatars().forEach((root) => root.classList.remove('is-morphing'));
+      document.querySelectorAll('.hero-avatar[data-avatar-cycle]').forEach((root) => {
+        root.classList.remove('is-morphing');
+      });
     }, 720);
   }
 
