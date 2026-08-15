@@ -246,6 +246,10 @@ a {
   font-size: 1.15rem;
 }
 
+.hero .lede {
+  max-width: 58rem;
+}
+
 .actions {
   display: flex;
   justify-content: center;
