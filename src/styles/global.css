@@ -568,7 +568,10 @@ html.is-mobile .messenger-item--mobile:not([hidden]) {
   color: var(--purple-bright);
 }
 
-.messenger-option--vk .messenger-option-mark,
+.messenger-option--vk .messenger-option-mark {
+  color: #0077ff;
+}
+
 .messenger-option--max .messenger-option-mark {
   background: transparent;
 }
