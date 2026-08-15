@@ -18,15 +18,17 @@ const {
 } = Astro.props;
 ---
 
-<div class:list={[className, 'avatar-swap']} aria-hidden={decorative ? 'true' : undefined}>
-  <img
-    class="face face-default"
-    src={site.avatar}
-    alt={alt}
-    width={size}
-    height={size}
-    fetchpriority={priority ? 'high' : undefined}
-  />
-  <img class="face face-smile" src={site.avatarSmile} alt="" width={size} height={size} aria-hidden="true" />
-  <img class="face face-old" src={site.avatarOld} alt="" width={size} height={size} aria-hidden="true" />
+<div class={className} aria-hidden={decorative ? 'true' : undefined}>
+  <div class="avatar-swap">
+    <img
+      class="face face-default"
+      src={site.avatar}
+      alt={alt}
+      width={size}
+      height={size}
+      fetchpriority={priority ? 'high' : undefined}
+    />
+    <img class="face face-smile" src={site.avatarSmile} alt="" width={size} height={size} aria-hidden="true" />
+    <img class="face face-old" src={site.avatarOld} alt="" width={size} height={size} aria-hidden="true" />
+  </div>
 </div>
