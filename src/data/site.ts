@@ -89,7 +89,7 @@ export const site = {
     {
       id: 'max',
       name: 'Макс',
-      href: 'https://max.ru/u/f9LHodD0cOIacvQRw_4sc_Vytab9DUJToOfdGK906C0Uis0W8mH7hHZPN38',
+      href: 'max://max.ru/u/f9LHodD0cOIacvQRw_4sc_Vytab9DUJToOfdGK906C0Uis0W8mH7hHZPN38',
       note: 'откроется приложение',
       mobileOnly: true,
     },

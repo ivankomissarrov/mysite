@@ -98,24 +98,17 @@ const menuId = 'messenger-menu';
     document.querySelectorAll('.messenger-item--mobile').forEach((item) => {
       if (item instanceof HTMLElement) item.hidden = !mobile;
     });
+  }
 
-    document.querySelectorAll('[data-max-app]').forEach((link) => {
-      if (!(link instanceof HTMLAnchorElement)) return;
-      const web = link.getAttribute('data-max-app');
-      if (!web) return;
-      try {
-        const url = new URL(web);
-        if (/Android/i.test(navigator.userAgent)) {
-          link.href = `intent://${url.pathname.replace(/^\//, '')}#Intent;scheme=https;host=${url.host};package=ru.oneme.app;S.browser_fallback_url=${encodeURIComponent(web)};end`;
-        } else {
-          link.href = web;
-        }
-      } catch {
-        link.href = web;
-      }
-      link.target = '_self';
-      link.removeAttribute('rel');
-    });
+  function openMaxApp(href) {
+    const existing = document.querySelector('[data-max-redirect]');
+    if (existing) existing.remove();
+    const frame = document.createElement('iframe');
+    frame.setAttribute('data-max-redirect', '');
+    frame.setAttribute('title', 'max');
+    frame.src = href;
+    frame.hidden = true;
+    document.body.appendChild(frame);
   }
 
   if (!document.documentElement.hasAttribute('data-messenger-bound')) {
@@ -127,6 +120,11 @@ const menuId = 'messenger-menu';
     const target = event.target instanceof Element ? event.target : null;
     const toggle = target?.closest('[data-messenger-toggle]');
     const root = target?.closest('[data-messenger-cta]');
+
+    const maxLink = target?.closest('[data-max-app]');
+    if (maxLink instanceof HTMLAnchorElement) {
+      openMaxApp(maxLink.getAttribute('data-max-app') ?? maxLink.href);
+    }
 
     if (target?.closest('.messenger-option')) {
       closeAll(null);
