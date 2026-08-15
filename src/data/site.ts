@@ -24,6 +24,7 @@ export const site = {
   avatar: '/images/avatar.webp',
   nav: [],
   cta: {
+    write: { href: 'https://t.me/IvanKomissarrov', label: 'Написать в Telegram' },
     order: { href: 'https://t.me/IvanKomissarrov', label: 'Рассчитать заказ' },
     work: { href: '/about/', label: 'Портфолио и опыт' },
   },

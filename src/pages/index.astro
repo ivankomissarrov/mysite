@@ -28,7 +28,10 @@ import { site } from '../data/site';
       которые раньше жили во ВКонтакте.
     </p>
     <div class="actions">
-      <a class="btn btn-primary" href={site.cta.order.href} target="_blank" rel="noopener noreferrer">
+      <a class="btn btn-primary" href={site.cta.write.href} target="_blank" rel="noopener noreferrer">
+        {site.cta.write.label}
+      </a>
+      <a class="btn btn-ghost" href={site.cta.order.href} target="_blank" rel="noopener noreferrer">
         {site.cta.order.label}
       </a>
       <a class="btn btn-ghost" href={site.cta.work.href}>
