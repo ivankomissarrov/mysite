@@ -5,7 +5,15 @@ import { site } from '../data/site';
 <footer class="site-footer">
   <div class="wrap footer-inner">
     <p>© {new Date().getFullYear()} {site.name}</p>
-    <p>
+    <p class="footer-links">
+      {
+        site.contacts.map((item) => (
+          <a class="muted-link" href={item.href} target="_blank" rel="noopener noreferrer">
+            {item.label}
+          </a>
+        ))
+      }
+      <a class="muted-link" href="/about/">Обо мне</a>
       <a class="muted-link" href="/rss.xml">RSS</a>
     </p>
   </div>

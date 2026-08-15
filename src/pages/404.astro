@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { site } from '../data/site';
 ---
 
 <BaseLayout title="Страница не найдена" description="Такой страницы нет. Вернитесь на главную.">
@@ -13,7 +14,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     <p class="lede">Адрес мог измениться или в ссылке опечатка.</p>
     <div class="actions">
       <a class="btn btn-primary" href="/">На главную</a>
-      <a class="btn btn-ghost" href="/about/">Обо мне</a>
+      <a class="btn btn-ghost" href={site.telegram} target="_blank" rel="noopener noreferrer">
+        Написать в Telegram
+      </a>
     </div>
   </section>
 </BaseLayout>

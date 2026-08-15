@@ -12,14 +12,24 @@ const path = Astro.url.pathname;
       </span>
       <span>{site.name}</span>
     </a>
-    <nav class="nav" aria-label="Основное меню">
-      {
-        site.nav.map((item) => (
-          <a href={item.href} aria-current={path === item.href ? 'page' : undefined}>
-            {item.label}
-          </a>
-        ))
-      }
-    </nav>
+    {
+      site.nav.length > 0 && (
+        <nav class="nav" aria-label="Основное меню">
+          {site.nav.map((item) => (
+            <a href={item.href} aria-current={path === item.href ? 'page' : undefined}>
+              {item.label}
+            </a>
+          ))}
+        </nav>
+      )
+    }
+    <a
+      class="btn btn-primary btn-compact"
+      href={site.telegram}
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      Написать
+    </a>
   </div>
 </header>
