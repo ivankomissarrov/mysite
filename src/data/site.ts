@@ -20,6 +20,8 @@ export const site = {
   },
   telegram: 'https://t.me/IvanKomissarrov',
   telegramHandle: '@IvanKomissarrov',
+  phone: '8 925 235 56 12',
+  phoneTel: '+79252355612',
   vk: 'https://vk.ru/ivankomissarrov',
   avatar: '/images/avatar.webp',
   avatarSmile: '/images/smile.webp',

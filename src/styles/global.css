@@ -358,6 +358,51 @@ body:has([data-face='old']:hover) .hero-avatar .avatar-swap {
   font-size: 0.88rem;
 }
 
+.header-phone {
+  flex-shrink: 0;
+  color: var(--text);
+  font-weight: 700;
+  font-size: 0.92rem;
+  letter-spacing: 0.04em;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  padding: 0.35rem 0;
+}
+
+.header-phone:hover {
+  color: var(--purple-bright);
+}
+
+.copy-toast {
+  position: fixed;
+  top: 5.4rem;
+  right: max(1.25rem, calc((100vw - var(--max)) / 2 + 1.25rem));
+  z-index: 40;
+  margin: 0;
+  padding: 0.65rem 1.15rem;
+  border-radius: 999px;
+  background: rgba(18, 12, 32, 0.94);
+  border: 1px solid var(--border-strong);
+  box-shadow: var(--shadow-glow);
+  color: var(--text);
+  font-weight: 700;
+  font-size: 0.88rem;
+  opacity: 0;
+  transform: translateY(-10px);
+  pointer-events: none;
+  visibility: hidden;
+  transition:
+    opacity 0.22s ease,
+    transform 0.22s ease,
+    visibility 0.22s;
+}
+
+.copy-toast.is-on {
+  opacity: 1;
+  transform: translateY(0);
+  visibility: visible;
+}
+
 .section {
   padding: 1.5rem 0 4.5rem;
 }

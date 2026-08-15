@@ -22,14 +22,59 @@ const path = Astro.url.pathname;
         </nav>
       )
     }
-    <a
-      class="btn btn-primary btn-compact"
-      href={site.cta.write.href}
-      data-face="smile"
-      target="_blank"
-      rel="noopener noreferrer"
-    >
-      {site.cta.write.label}
+    <a class="header-phone" href={`tel:${site.phoneTel}`} data-phone-copy={site.phone} data-face="smile">
+      {site.phone}
     </a>
   </div>
 </header>
+
+<p class="copy-toast" data-copy-toast role="status">Телефон скопирован</p>
+
+<script>
+  const toastTimers = new WeakMap();
+
+  function isMobilePhone() {
+    const uaData = navigator.userAgentData;
+    if (uaData && typeof uaData.mobile === 'boolean') return uaData.mobile;
+    return /Mobi|Android.*Mobile|iPhone|iPod/i.test(navigator.userAgent);
+  }
+
+  async function copyText(text) {
+    try {
+      await navigator.clipboard.writeText(text);
+      return true;
+    } catch {
+      const field = document.createElement('textarea');
+      field.value = text;
+      field.setAttribute('readonly', '');
+      field.style.position = 'fixed';
+      field.style.left = '-9999px';
+      document.body.appendChild(field);
+      field.select();
+      const ok = document.execCommand('copy');
+      field.remove();
+      return ok;
+    }
+  }
+
+  function showCopied() {
+    const toast = document.querySelector('[data-copy-toast]');
+    if (!(toast instanceof HTMLElement)) return;
+    toast.classList.add('is-on');
+    const prev = toastTimers.get(toast);
+    if (prev) clearTimeout(prev);
+    toastTimers.set(
+      toast,
+      setTimeout(() => toast.classList.remove('is-on'), 2200),
+    );
+  }
+
+  document.addEventListener('click', async (event) => {
+    const link = event.target instanceof Element ? event.target.closest('[data-phone-copy]') : null;
+    if (!(link instanceof HTMLAnchorElement)) return;
+    if (isMobilePhone()) return;
+    event.preventDefault();
+    const text = link.getAttribute('data-phone-copy') ?? '';
+    if (await copyText(text)) showCopied();
+  });
+</script>
