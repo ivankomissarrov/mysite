@@ -568,16 +568,13 @@ html.is-mobile .messenger-item--mobile:not([hidden]) {
   color: var(--purple-bright);
 }
 
-.messenger-option--vk .messenger-option-mark {
-  color: #dce6ff;
+.messenger-option--vk .messenger-option-mark,
+.messenger-option--max .messenger-option-mark {
+  background: transparent;
 }
 
 .messenger-option--telegram .messenger-option-mark {
-  color: #7dd3fc;
-}
-
-.messenger-option--max .messenger-option-mark {
-  color: #f0abfc;
+  color: #2aabee;
 }
 
 .messenger-option-text {
