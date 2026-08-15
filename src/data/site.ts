@@ -87,4 +87,14 @@ export const site = {
     { href: 'https://t.me/IvanKomissarrov', label: 'Telegram' },
     { href: 'https://vk.ru/ivankomissarrov', label: 'ВКонтакте' },
   ],
+  partners: [
+    { id: 'prosveshchenie', name: 'ГК «Просвещение»', src: '/images/partners/prosveshchenie.svg' },
+    { id: 'rosmolodezh', name: 'Росмолодёжь', src: '/images/partners/rosmolodezh.webp' },
+    { id: 'samolet', name: 'Самолет', src: '/images/partners/samolet.webp' },
+    { id: 'universal', name: 'Universal University', src: '/images/partners/universal.webp' },
+    { id: 'ithub', name: 'IThub', src: '/images/partners/ithub.webp' },
+    { id: 'gpntb', name: 'ГПНТБ России', src: '/images/partners/gpntb.webp' },
+    { id: 'altairika', name: 'Альтаирика', src: '/images/partners/altairika.webp' },
+    { id: 'moi-biznes', name: '«Мой бизнес»', src: '/images/partners/moi-biznes.webp' },
+  ],
 } as const;

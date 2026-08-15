@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Avatar from '../components/Avatar.astro';
+import Partners from '../components/Partners.astro';
 import { site } from '../data/site';
 ---
 
@@ -42,7 +43,12 @@ import { site } from '../data/site';
       <a href={site.telegram}>{site.telegramHandle}</a>. Страница ВКонтакте —
       <a href={site.vk}>vk.ru/ivankomissarrov</a>.
     </p>
-    <div class="grid-3" style="margin-top: 2rem;">
+  </section>
+
+  <Partners />
+
+  <section class="section wrap">
+    <div class="grid-3">
       <article class="card">
         <h3>Гильдия / ГРаНИ</h3>
         <p>Операционный руководитель проектов: конвент, подкаст, стримы и конкурсы для авторов.</p>
