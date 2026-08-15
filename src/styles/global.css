@@ -148,22 +148,22 @@ a {
 }
 
 .hero-avatar {
-  width: 168px;
-  height: 168px;
+  width: 240px;
+  height: 240px;
   margin: 0 auto 1.7rem;
   border-radius: 50%;
-  padding: 3px;
+  padding: 4px;
   position: relative;
   cursor: pointer;
   background: linear-gradient(145deg, #e9d5ff 0%, #7c3aed 48%, #5ce1ff 100%);
   box-shadow:
-    0 0 0 8px rgba(181, 107, 255, 0.08),
-    0 0 48px rgba(124, 58, 237, 0.4);
+    0 0 0 10px rgba(181, 107, 255, 0.08),
+    0 0 56px rgba(124, 58, 237, 0.45);
 }
 
 .hero-avatar-sm {
-  width: 128px;
-  height: 128px;
+  width: 180px;
+  height: 180px;
   margin-bottom: 1.4rem;
 }
 
