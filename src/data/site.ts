@@ -4,7 +4,7 @@ export const site = {
   shortName: 'ИК',
   title: 'Иван Комиссаров — геймдизайн и игропрактика',
   description:
-    'Игропрактик и геймдизайнер: образовательные игры, настольный геймдизайн, курсы и конвенты. Сотрудничество — Telegram @IvanKomissarov.',
+    'Игропрактик и геймдизайнер: образовательные игры, настольный геймдизайн, курсы и конвенты. Сотрудничество — Telegram @IvanKomissarrov.',
   locale: 'ru_RU',
   language: 'ru',
   author: {
@@ -14,17 +14,17 @@ export const site = {
     jobTitle: 'Игропрактик и геймдизайнер',
     sameAs: [
       'https://vk.ru/ivankomissarrov',
-      'https://t.me/IvanKomissarov',
+      'https://t.me/IvanKomissarrov',
       'https://github.com/ivankomissarrov',
     ],
   },
-  telegram: 'https://t.me/IvanKomissarov',
-  telegramHandle: '@IvanKomissarov',
+  telegram: 'https://t.me/IvanKomissarrov',
+  telegramHandle: '@IvanKomissarrov',
   vk: 'https://vk.ru/ivankomissarrov',
   avatar: '/images/avatar.webp',
   nav: [],
   contacts: [
-    { href: 'https://t.me/IvanKomissarov', label: '@IvanKomissarov' },
+    { href: 'https://t.me/IvanKomissarrov', label: '@IvanKomissarrov' },
     { href: 'https://vk.ru/ivankomissarrov', label: 'ВКонтакте' },
   ],
 } as const;
