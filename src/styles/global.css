@@ -390,7 +390,7 @@ body:has([data-face='old']:hover) .hero-avatar:not(.is-morphing) .avatar-swap {
 }
 
 .hero {
-  padding: 5.5rem 0 4rem;
+  padding: 5.5rem 0 0;
   text-align: center;
   position: relative;
 }
@@ -488,7 +488,7 @@ body:has([data-face='old']:hover) .hero-avatar:not(.is-morphing) .avatar-swap {
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 1.4rem 1.6rem;
   list-style: none;
-  margin: 2.4rem auto 0;
+  margin: 3.75rem auto 2.25rem;
   padding: 0;
   max-width: 52rem;
 }
@@ -516,7 +516,7 @@ body:has([data-face='old']:hover) .hero-avatar:not(.is-morphing) .avatar-swap {
   .hero-stats {
     grid-template-columns: 1fr;
     gap: 1.35rem;
-    margin-top: 2rem;
+    margin: 2.6rem auto 1.1rem;
   }
 }
 
