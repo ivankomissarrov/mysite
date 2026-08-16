@@ -1,5 +1,5 @@
 {
-  "endpoint": "",
+  "endpoint": "https://order-bot.tender-sun.workers.dev",
   "currency": "RUB",
   "variancePercent": 20,
   "varianceNote": "Цена ориентировочная и может варьироваться в пределах 20%",
