@@ -4,6 +4,8 @@ Cloudflare из России часто недоступен, поэтому ф�
 
 Токен в git не кладётся. Подойдёт любой хостинг **не на Cloudflare**: Timeweb, Selectel, Yandex Cloud Functions, Railway, Fly.io.
 
+Пошагово для Яндекса со ссылками: [YANDEX.md](YANDEX.md).
+
 ```bash
 cd workers/order-bot
 BOT_TOKEN=... CHAT_ID=... npm start
