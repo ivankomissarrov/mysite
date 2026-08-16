@@ -47,6 +47,12 @@ tags: ['тема']
 
 Аватарка: положите исходник в `public/images/avatar.jpg`. При старте скрипт сделает превью `public/images/avatar.webp` для главной и шапки.
 
+## Калькулятор заказа
+
+Страница `/order/` считает ориентировочную цену по `src/data/order-catalog.json`. Каталог правится локальным редактором `tools/order-editor.html` (открыть файл в браузере, скачать JSON, заменить им `src/data/order-catalog.json`).
+
+Заявки уходят в Telegram через Cloudflare Worker. Деплой: `workers/order-bot/README.md`.
+
 ## Перед публикацией
 
 В `src/data/site.ts` и `astro.config.mjs` замените адрес сайта на свой домен. Имя, описание и ссылки правятся в `src/data/site.ts`.

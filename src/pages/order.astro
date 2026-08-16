@@ -1,0 +1,26 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import OrderForm from '../components/OrderForm.astro';
+---
+
+<BaseLayout
+  title="Рассчитать заказ"
+  description="Выберите тип продукта и опции — ориентировочная цена появится сразу. Заявку можно отправить с сайта."
+  path="/order/"
+>
+  <section class="page-hero wrap">
+    <p class="hero-kicker">Заявка</p>
+    <h1 class="page-title">
+      Рассчитать
+      <br />
+      <span class="gradient-text">заказ</span>
+    </h1>
+    <p class="lede">
+      Соберите одну или несколько позиций, оставьте телефон и напишите задачу своими словами.
+    </p>
+  </section>
+
+  <section class="section wrap order-page">
+    <OrderForm />
+  </section>
+</BaseLayout>

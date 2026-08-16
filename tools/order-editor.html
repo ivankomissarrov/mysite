@@ -1,0 +1,525 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Редактор каталога заказа</title>
+    <style>
+      :root {
+        --bg: #050508;
+        --card: #0e0c18;
+        --text: #f6f3ff;
+        --muted: #b7b0c8;
+        --dim: #7e778f;
+        --purple: #b56bff;
+        --border: rgba(181, 107, 255, 0.22);
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font: 16px/1.5 system-ui, sans-serif;
+        color: var(--text);
+        background:
+          radial-gradient(800px 400px at 10% -10%, rgba(124, 58, 237, 0.28), transparent 55%),
+          var(--bg);
+      }
+      .wrap { width: min(920px, calc(100% - 2rem)); margin: 0 auto; padding: 2rem 0 4rem; }
+      h1 { font-size: 1.8rem; margin: 0 0 0.4rem; }
+      .lede { color: var(--muted); margin: 0 0 1.4rem; }
+      .bar { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-bottom: 1.4rem; }
+      button, .file-btn {
+        min-height: 42px;
+        padding: 0.5rem 0.95rem;
+        border-radius: 999px;
+        border: 1px solid var(--border);
+        background: transparent;
+        color: var(--text);
+        font: inherit;
+        cursor: pointer;
+      }
+      .primary { background: linear-gradient(180deg, #a855f7, #6d28d9); border-color: transparent; }
+      .file-btn input { display: none; }
+      .card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 1rem 1.1rem;
+        margin-bottom: 1rem;
+      }
+      .card h2, .card h3 { margin: 0 0 0.8rem; font-size: 1.05rem; }
+      .grid { display: grid; gap: 0.7rem; }
+      .row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.7rem; }
+      .row-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.7rem; }
+      label { display: grid; gap: 0.3rem; color: var(--muted); font-size: 0.86rem; }
+      input, select, textarea {
+        width: 100%;
+        min-height: 40px;
+        padding: 0.5rem 0.7rem;
+        border-radius: 10px;
+        border: 1px solid var(--border);
+        background: #08080e;
+        color: var(--text);
+        font: inherit;
+      }
+      textarea { min-height: 5.5rem; resize: vertical; }
+      .options { display: grid; gap: 0.5rem; margin-top: 0.7rem; }
+      .option {
+        display: grid;
+        grid-template-columns: 1fr 2fr 1fr auto;
+        gap: 0.45rem;
+        align-items: end;
+      }
+      .head { display: flex; justify-content: space-between; gap: 0.8rem; align-items: center; }
+      .ghost { color: var(--dim); }
+      .status { min-height: 1.4em; color: var(--muted); margin: 0 0 1rem; }
+      .drop { outline: 2px dashed transparent; }
+      .drop.is-over { outline-color: var(--purple); }
+      @media (max-width: 720px) {
+        .row, .row-3, .option { grid-template-columns: 1fr; }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="wrap drop" id="app">
+      <h1>Редактор каталога заказа</h1>
+      <p class="lede">
+        Откройте JSON, поправьте типы и цены, скачайте файл и положите его в
+        <code>src/data/order-catalog.json</code>.
+      </p>
+      <div class="bar">
+        <label class="file-btn">Открыть JSON<input id="open" type="file" accept="application/json,.json" /></label>
+        <button class="primary" id="download" type="button">Скачать JSON</button>
+        <button id="reset" type="button">Вернуть стартовый</button>
+      </div>
+      <p class="status" id="status">Можно также перетащить файл в окно.</p>
+      <div id="root"></div>
+    </main>
+    <script>
+      const starter = {
+        endpoint: '',
+        currency: 'RUB',
+        variancePercent: 20,
+        varianceNote: 'Цена ориентировочная и может варьироваться в пределах 20%',
+        negotiableLabel: 'по договорённости',
+        discounts: [
+          { from: 200000, percent: 15 },
+          { from: 100000, percent: 10 },
+          { from: 50000, percent: 5 },
+        ],
+        products: [
+          { id: 'consult', name: 'Онлайн консультация', kind: 'hours', hourlyRate: 5000, hoursMin: 1, hoursMax: 10 },
+          {
+            id: 'boardgame',
+            name: 'Настольная игра под ключ',
+            kind: 'options',
+            basePrice: 120000,
+            options: [
+              { id: 'art', name: 'Иллюстрации', price: 40000 },
+              { id: 'layout', name: 'Вёрстка макета', price: 25000 },
+              { id: 'method', name: 'Методические материалы', price: 20000 },
+              { id: 'print', name: 'Сопровождение печати', price: 15000 },
+            ],
+          },
+          {
+            id: 'rework',
+            name: 'Доработка вашей игры',
+            kind: 'options',
+            basePrice: 40000,
+            options: [
+              { id: 'balance', name: 'Баланс и правила', price: 20000 },
+              { id: 'mechanics', name: 'Новые механики', price: 35000 },
+              { id: 'copy', name: 'Редактура текстов', price: 15000 },
+              { id: 'playtest', name: 'Тестирование с группой', price: 25000 },
+            ],
+          },
+          {
+            id: 'course',
+            name: 'Очный курс (3 дня)',
+            kind: 'options',
+            basePrice: 90000,
+            options: [
+              { id: 'handouts', name: 'Раздаточные материалы', price: 15000 },
+              { id: 'certs', name: 'Сертификаты участникам', price: 10000 },
+              { id: 'travel', name: 'Выезд в другой город', price: 40000 },
+              { id: 'record', name: 'Запись занятий', price: 20000 },
+            ],
+          },
+          {
+            id: 'larp',
+            name: 'Игра живого действия под ключ',
+            kind: 'options',
+            basePrice: 150000,
+            options: [
+              { id: 'script', name: 'Сценарий и роли', price: 50000 },
+              { id: 'props', name: 'Реквизит', price: 30000 },
+              { id: 'hosts', name: 'Ведущие на площадке', price: 40000 },
+              { id: 'media', name: 'Фото- и видеосъёмка', price: 25000 },
+            ],
+          },
+          {
+            id: 'teambuilding',
+            name: 'Организация корпоратива/тимбилдинга',
+            kind: 'options',
+            basePrice: 80000,
+            options: [
+              { id: 'venue', name: 'Площадка и логистика', price: 40000 },
+              { id: 'host', name: 'Ведущий', price: 25000 },
+              { id: 'kit', name: 'Игровой реквизит', price: 20000 },
+              { id: 'wrap', name: 'Фасилитация итогов', price: 15000 },
+            ],
+          },
+          { id: 'other', name: 'Что-то другое', kind: 'custom' },
+        ],
+      };
+
+      let state = structuredClone(starter);
+      const root = document.getElementById('root');
+      const status = document.getElementById('status');
+      const app = document.getElementById('app');
+
+      const esc = (value) =>
+        String(value ?? '').replace(/[&<>"']/g, (char) => ({
+          '&': '&amp;',
+          '<': '&lt;',
+          '>': '&gt;',
+          '"': '&quot;',
+          "'": '&#39;',
+        })[char]);
+
+      const num = (value) => {
+        const n = Number(value);
+        return Number.isFinite(n) ? n : 0;
+      };
+
+      const slug = (value) =>
+        String(value)
+          .toLowerCase()
+          .replace(/[^a-z0-9а-яё]+/gi, '-')
+          .replace(/^-|-$/g, '')
+          .slice(0, 32) || `id-${Date.now()}`;
+
+      function normalize(raw) {
+        const data = raw && typeof raw === 'object' ? raw : {};
+        return {
+          endpoint: String(data.endpoint ?? ''),
+          currency: String(data.currency ?? 'RUB'),
+          variancePercent: num(data.variancePercent) || 20,
+          varianceNote: String(data.varianceNote ?? starter.varianceNote),
+          negotiableLabel: String(data.negotiableLabel ?? starter.negotiableLabel),
+          discounts: Array.isArray(data.discounts)
+            ? data.discounts.map((item) => ({ from: num(item.from), percent: num(item.percent) }))
+            : structuredClone(starter.discounts),
+          products: Array.isArray(data.products)
+            ? data.products.map((product) => ({
+                id: String(product.id || slug(product.name)),
+                name: String(product.name ?? ''),
+                kind: ['hours', 'options', 'custom'].includes(product.kind) ? product.kind : 'options',
+                hourlyRate: num(product.hourlyRate),
+                hoursMin: num(product.hoursMin) || 1,
+                hoursMax: num(product.hoursMax) || 10,
+                basePrice: num(product.basePrice),
+                options: Array.isArray(product.options)
+                  ? product.options.map((option) => ({
+                      id: String(option.id || slug(option.name)),
+                      name: String(option.name ?? ''),
+                      price: num(option.price),
+                    }))
+                  : [],
+              }))
+            : structuredClone(starter.products),
+        };
+      }
+
+      function exportCatalog(data) {
+        return {
+          endpoint: data.endpoint,
+          currency: data.currency,
+          variancePercent: data.variancePercent,
+          varianceNote: data.varianceNote,
+          negotiableLabel: data.negotiableLabel,
+          discounts: data.discounts
+            .map((item) => ({ from: num(item.from), percent: num(item.percent) }))
+            .sort((a, b) => b.from - a.from),
+          products: data.products.map((product) => {
+            if (product.kind === 'hours') {
+              return {
+                id: product.id || slug(product.name),
+                name: product.name,
+                kind: 'hours',
+                hourlyRate: num(product.hourlyRate),
+                hoursMin: num(product.hoursMin) || 1,
+                hoursMax: num(product.hoursMax) || 10,
+              };
+            }
+            if (product.kind === 'custom') {
+              return { id: product.id || slug(product.name), name: product.name, kind: 'custom' };
+            }
+            return {
+              id: product.id || slug(product.name),
+              name: product.name,
+              kind: 'options',
+              basePrice: num(product.basePrice),
+              options: (product.options ?? []).map((option) => ({
+                id: option.id || slug(option.name),
+                name: option.name,
+                price: num(option.price),
+              })),
+            };
+          }),
+        };
+      }
+
+      function render() {
+        root.innerHTML = `
+          <section class="card">
+            <h2>Общие настройки</h2>
+            <div class="grid">
+              <label>URL Cloudflare Worker (пусто — заявка копируется)
+                <input data-path="endpoint" value="${esc(state.endpoint)}" placeholder="https://order-bot.xxx.workers.dev" />
+              </label>
+              <div class="row">
+                <label>Валюта
+                  <input data-path="currency" value="${esc(state.currency)}" />
+                </label>
+                <label>Разброс, %
+                  <input data-path="variancePercent" type="number" min="0" value="${esc(state.variancePercent)}" />
+                </label>
+              </div>
+              <label>Текст спойлера
+                <textarea data-path="varianceNote">${esc(state.varianceNote)}</textarea>
+              </label>
+              <label>Подпись, если цены нет
+                <input data-path="negotiableLabel" value="${esc(state.negotiableLabel)}" />
+              </label>
+            </div>
+          </section>
+          <section class="card">
+            <div class="head">
+              <h2>Скидки от суммы</h2>
+              <button type="button" data-add-discount>Добавить порог</button>
+            </div>
+            <div class="grid">
+              ${state.discounts
+                .map(
+                  (item, index) => `
+                    <div class="row-3">
+                      <label>От, ₽
+                        <input data-discount="${index}" data-field="from" type="number" min="0" value="${esc(item.from)}" />
+                      </label>
+                      <label>Скидка, %
+                        <input data-discount="${index}" data-field="percent" type="number" min="0" max="100" value="${esc(item.percent)}" />
+                      </label>
+                      <label>&nbsp;
+                        <button class="ghost" type="button" data-remove-discount="${index}">Удалить</button>
+                      </label>
+                    </div>
+                  `,
+                )
+                .join('')}
+            </div>
+          </section>
+          ${state.products
+            .map(
+              (product, index) => `
+                <section class="card" data-product="${index}">
+                  <div class="head">
+                    <h3>Продукт ${index + 1}</h3>
+                    <button class="ghost" type="button" data-remove-product="${index}">Удалить тип</button>
+                  </div>
+                  <div class="row-3">
+                    <label>id
+                      <input data-product-field="id" value="${esc(product.id)}" />
+                    </label>
+                    <label>Название
+                      <input data-product-field="name" value="${esc(product.name)}" />
+                    </label>
+                    <label>Тип цены
+                      <select data-product-field="kind">
+                        <option value="hours" ${product.kind === 'hours' ? 'selected' : ''}>Часы, слайдер</option>
+                        <option value="options" ${product.kind === 'options' ? 'selected' : ''}>База + галочки</option>
+                        <option value="custom" ${product.kind === 'custom' ? 'selected' : ''}>Без цены</option>
+                      </select>
+                    </label>
+                  </div>
+                  ${
+                    product.kind === 'hours'
+                      ? `
+                        <div class="row-3" style="margin-top:0.7rem">
+                          <label>Ставка за час, ₽
+                            <input data-product-field="hourlyRate" type="number" min="0" value="${esc(product.hourlyRate)}" />
+                          </label>
+                          <label>Часы от
+                            <input data-product-field="hoursMin" type="number" min="1" value="${esc(product.hoursMin)}" />
+                          </label>
+                          <label>Часы до
+                            <input data-product-field="hoursMax" type="number" min="1" value="${esc(product.hoursMax)}" />
+                          </label>
+                        </div>
+                      `
+                      : ''
+                  }
+                  ${
+                    product.kind === 'options'
+                      ? `
+                        <label style="margin-top:0.7rem">Базовая цена, ₽
+                          <input data-product-field="basePrice" type="number" min="0" value="${esc(product.basePrice)}" />
+                        </label>
+                        <div class="options">
+                          ${(product.options ?? [])
+                            .map(
+                              (option, optionIndex) => `
+                                <div class="option">
+                                  <label>id
+                                    <input data-option="${optionIndex}" data-option-field="id" value="${esc(option.id)}" />
+                                  </label>
+                                  <label>Галочка
+                                    <input data-option="${optionIndex}" data-option-field="name" value="${esc(option.name)}" />
+                                  </label>
+                                  <label>Доплата, ₽
+                                    <input data-option="${optionIndex}" data-option-field="price" type="number" min="0" value="${esc(option.price)}" />
+                                  </label>
+                                  <button class="ghost" type="button" data-remove-option="${optionIndex}">Удалить</button>
+                                </div>
+                              `,
+                            )
+                            .join('')}
+                          <button type="button" data-add-option>Добавить галочку</button>
+                        </div>
+                      `
+                      : ''
+                  }
+                </section>
+              `,
+            )
+            .join('')}
+          <button type="button" data-add-product>Добавить тип продукта</button>
+        `;
+      }
+
+      function setStatus(text) {
+        status.textContent = text;
+      }
+
+      function readFile(file) {
+        return file.text().then((text) => {
+          state = normalize(JSON.parse(text));
+          render();
+          setStatus(`Открыт файл: ${file.name}`);
+        });
+      }
+
+      root.addEventListener('input', (event) => {
+        const target = event.target;
+        if (!(target instanceof HTMLInputElement || target instanceof HTMLSelectElement || target instanceof HTMLTextAreaElement)) {
+          return;
+        }
+        if (target.dataset.path) {
+          state[target.dataset.path] = target.type === 'number' ? num(target.value) : target.value;
+          return;
+        }
+        if (target.dataset.discount) {
+          const item = state.discounts[Number(target.dataset.discount)];
+          if (item) item[target.dataset.field] = num(target.value);
+          return;
+        }
+        const card = target.closest('[data-product]');
+        if (!card) return;
+        const product = state.products[Number(card.dataset.product)];
+        if (!product) return;
+        if (target.dataset.productField) {
+          const field = target.dataset.productField;
+          product[field] = target.type === 'number' ? num(target.value) : target.value;
+          if (field === 'kind') render();
+          return;
+        }
+        if (target.dataset.option) {
+          const option = product.options[Number(target.dataset.option)];
+          if (!option) return;
+          option[target.dataset.optionField] = target.type === 'number' ? num(target.value) : target.value;
+        }
+      });
+
+      root.addEventListener('click', (event) => {
+        const target = event.target;
+        if (!(target instanceof HTMLElement)) return;
+        if (target.dataset.addDiscount !== undefined) {
+          state.discounts.push({ from: 0, percent: 0 });
+          render();
+        }
+        if (target.dataset.removeDiscount !== undefined) {
+          state.discounts.splice(Number(target.dataset.removeDiscount), 1);
+          render();
+        }
+        if (target.dataset.addProduct !== undefined) {
+          state.products.push({
+            id: `product-${state.products.length + 1}`,
+            name: 'Новый продукт',
+            kind: 'options',
+            basePrice: 0,
+            options: [],
+          });
+          render();
+        }
+        if (target.dataset.removeProduct !== undefined) {
+          state.products.splice(Number(target.dataset.removeProduct), 1);
+          render();
+        }
+        const card = target.closest('[data-product]');
+        const product = card ? state.products[Number(card.dataset.product)] : null;
+        if (target.dataset.addOption !== undefined && product) {
+          product.options = product.options ?? [];
+          product.options.push({ id: `opt-${product.options.length + 1}`, name: 'Новая опция', price: 0 });
+          render();
+        }
+        if (target.dataset.removeOption !== undefined && product) {
+          product.options.splice(Number(target.dataset.removeOption), 1);
+          render();
+        }
+      });
+
+      document.getElementById('open').addEventListener('change', (event) => {
+        const file = event.target.files?.[0];
+        if (file) readFile(file).catch(() => setStatus('Не получилось прочитать JSON.'));
+        event.target.value = '';
+      });
+
+      document.getElementById('download').addEventListener('click', () => {
+        const json = `${JSON.stringify(exportCatalog(state), null, 2)}\n`;
+        const blob = new Blob([json], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'order-catalog.json';
+        link.click();
+        URL.revokeObjectURL(url);
+        setStatus('Скачан order-catalog.json — замените им src/data/order-catalog.json');
+      });
+
+      document.getElementById('reset').addEventListener('click', () => {
+        state = structuredClone(starter);
+        render();
+        setStatus('Вернули стартовый каталог.');
+      });
+
+      ;['dragenter', 'dragover'].forEach((name) => {
+        app.addEventListener(name, (event) => {
+          event.preventDefault();
+          app.classList.add('is-over');
+        });
+      });
+      ;['dragleave', 'drop'].forEach((name) => {
+        app.addEventListener(name, (event) => {
+          event.preventDefault();
+          app.classList.remove('is-over');
+        });
+      });
+      app.addEventListener('drop', (event) => {
+        const file = event.dataTransfer?.files?.[0];
+        if (file) readFile(file).catch(() => setStatus('Не получилось прочитать JSON.'));
+      });
+
+      render();
+    </script>
+  </body>
+</html>

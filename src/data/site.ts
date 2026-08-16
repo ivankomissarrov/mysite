@@ -80,7 +80,7 @@ export const site = {
   nav: [],
   cta: {
     write: { href: '#messengers', label: 'Написать в мессенджере' },
-    order: { href: 'https://t.me/IvanKomissarrov', label: 'Рассчитать заказ' },
+    order: { href: '/order/', label: 'Рассчитать заказ' },
     work: { href: '/about/', label: 'Портфолио и опыт' },
   },
   messengers: [
