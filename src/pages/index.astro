@@ -32,6 +32,16 @@ import { site } from '../data/site';
         {site.cta.work.label}
       </a>
     </div>
+    <ul class="hero-stats">
+      {
+        site.stats.map((item) => (
+          <li>
+            <strong class="gradient-text">{item.value}</strong>
+            <span>{item.label}</span>
+          </li>
+        ))
+      }
+    </ul>
   </section>
 
   <Partners />

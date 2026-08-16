@@ -99,6 +99,11 @@ export const site = {
       mobileOnly: true,
     },
   ],
+  stats: [
+    { value: '10 000', label: 'экземпляров игр моего авторства' },
+    { value: '97', label: 'коммерческих проектов' },
+    { value: '200+', label: 'педагогов на курсах' },
+  ],
   contacts: [
     { href: 'https://t.me/IvanKomissarrov', label: 'Telegram' },
     { href: 'https://vk.ru/ivankomissarrov', label: 'ВКонтакте' },

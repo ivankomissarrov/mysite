@@ -483,6 +483,43 @@ body:has([data-face='old']:hover) .hero-avatar:not(.is-morphing) .avatar-swap {
   }
 }
 
+.hero-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.4rem 1.6rem;
+  list-style: none;
+  margin: 2.4rem auto 0;
+  padding: 0;
+  max-width: 52rem;
+}
+
+.hero-stats li {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.hero-stats strong {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 5vw, 3.1rem);
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  line-height: 1.05;
+}
+
+.hero-stats span {
+  color: var(--text-muted);
+  font-size: 0.92rem;
+  line-height: 1.35;
+}
+
+@media (max-width: 700px) {
+  .hero-stats {
+    grid-template-columns: 1fr;
+    gap: 1.35rem;
+    margin-top: 2rem;
+  }
+}
+
 .btn {
   display: inline-flex;
   align-items: center;
