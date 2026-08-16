@@ -24,6 +24,7 @@ export interface Discount {
 
 export interface OrderCatalog {
   endpoint: string;
+  telegramShare: string;
   currency: string;
   variancePercent: number;
   varianceNote: string;
@@ -188,4 +189,10 @@ export function digitsOnly(value: string): string {
 export function isValidPhone(value: string): boolean {
   const digits = digitsOnly(value);
   return digits.length >= 10 && digits.length <= 15;
+}
+
+export function telegramOrderUrl(shareBase: string, message: string): string {
+  const base = shareBase.replace(/\/$/, '');
+  const withText = `${base}?text=${encodeURIComponent(message)}`;
+  return withText.length <= 1800 ? withText : base;
 }

@@ -51,7 +51,7 @@ tags: ['тема']
 
 Страница `/order/` считает ориентировочную цену по `src/data/order-catalog.json`. Каталог правится локальным редактором `tools/order-editor.html` (открыть файл в браузере, скачать JSON, заменить им `src/data/order-catalog.json`).
 
-Заявки уходят в Telegram через Cloudflare Worker. Деплой: `workers/order-bot/README.md`.
+Заявка по умолчанию открывает Telegram с готовым текстом — так надёжнее из России, чем Cloudflare. Если нужен бот без действия клиента, релей поднимается на Timeweb, Yandex Cloud, Railway или Fly: `workers/order-bot/README.md`.
 
 ## Перед публикацией
 

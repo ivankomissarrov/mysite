@@ -58,6 +58,7 @@ const orderCatalog = catalog as OrderCatalog;
     formatRubFrom,
     isValidPhone,
     quoteOrder,
+    telegramOrderUrl,
     type OrderCatalog,
     type OrderLineInput,
   } from '../lib/order';
@@ -325,37 +326,50 @@ const orderCatalog = catalog as OrderCatalog;
       if (submit) submit.disabled = true;
       setStatus(form, 'Отправляем заявку…');
 
-      const fallback = async (reason: string) => {
+      const openTelegram = async (reason: string) => {
         const copied = await copyText(message);
+        if (catalog.telegramShare) {
+          window.open(telegramOrderUrl(catalog.telegramShare, message), '_blank', 'noopener,noreferrer');
+        }
+        const prefix = reason ? `${reason} ` : '';
         setStatus(
           form,
           copied
-            ? `${reason} Текст заявки скопирован — пришлите его в мессенджере.`
-            : `${reason} Скопируйте заявку вручную и пришлите в мессенджере.`,
-          copied ? 'ok' : 'err',
+            ? `${prefix}Текст скопирован, откройте Telegram и нажмите отправить.`
+            : `${prefix}Откройте Telegram и вставьте текст заявки.`,
+          'ok',
         );
       };
 
-      if (!catalog.endpoint) {
-        await fallback('Бот ещё не подключён.');
-        if (submit) submit.disabled = false;
-        return;
-      }
+      const postOrder = async () => {
+        if (!catalog.endpoint) return false;
+        const controller = new AbortController();
+        const timer = window.setTimeout(() => controller.abort(), 2500);
+        try {
+          const response = await fetch(catalog.endpoint, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+            signal: controller.signal,
+          });
+          return response.ok;
+        } catch {
+          return false;
+        } finally {
+          window.clearTimeout(timer);
+        }
+      };
 
       try {
-        const response = await fetch(catalog.endpoint, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload),
-        });
-        if (!response.ok) throw new Error(String(response.status));
-        setStatus(form, 'Заявка отправлена. Я напишу вам в мессенджере.', 'ok');
-        form.reset();
-        lines = [defaultLine()];
-        renderLines(list);
-        updateQuote(form);
-      } catch {
-        await fallback('Не получилось отправить через бота.');
+        if (await postOrder()) {
+          setStatus(form, 'Заявка отправлена. Я напишу вам в мессенджере.', 'ok');
+          form.reset();
+          lines = [defaultLine()];
+          renderLines(list);
+          updateQuote(form);
+        } else {
+          await openTelegram(catalog.endpoint ? 'Сервер заявок недоступен.' : '');
+        }
       } finally {
         if (submit) submit.disabled = false;
       }

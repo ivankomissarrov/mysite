@@ -98,6 +98,7 @@
     <script>
       const starter = {
         endpoint: '',
+        telegramShare: 'https://t.me/IvanKomissarrov',
         currency: 'RUB',
         variancePercent: 20,
         varianceNote: 'Цена ориентировочная и может варьироваться в пределах 20%',
@@ -203,6 +204,7 @@
         const data = raw && typeof raw === 'object' ? raw : {};
         return {
           endpoint: String(data.endpoint ?? ''),
+          telegramShare: String(data.telegramShare ?? 'https://t.me/IvanKomissarrov'),
           currency: String(data.currency ?? 'RUB'),
           variancePercent: num(data.variancePercent) || 20,
           varianceNote: String(data.varianceNote ?? starter.varianceNote),
@@ -234,6 +236,7 @@
       function exportCatalog(data) {
         return {
           endpoint: data.endpoint,
+          telegramShare: data.telegramShare,
           currency: data.currency,
           variancePercent: data.variancePercent,
           varianceNote: data.varianceNote,
@@ -275,8 +278,11 @@
           <section class="card">
             <h2>Общие настройки</h2>
             <div class="grid">
-              <label>URL Cloudflare Worker (пусто — заявка копируется)
-                <input data-path="endpoint" value="${esc(state.endpoint)}" placeholder="https://order-bot.xxx.workers.dev" />
+              <label>URL релеея заявок (пусто — открывается Telegram)
+                <input data-path="endpoint" value="${esc(state.endpoint)}" placeholder="https://your-app.timeweb.cloud" />
+              </label>
+              <label>Чат Telegram для заявки
+                <input data-path="telegramShare" value="${esc(state.telegramShare)}" placeholder="https://t.me/IvanKomissarrov" />
               </label>
               <div class="row">
                 <label>Валюта
