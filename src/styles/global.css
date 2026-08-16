@@ -178,12 +178,12 @@ a {
 
 .avatar-hint {
   position: absolute;
-  left: 70%;
-  top: 66%;
+  left: calc(100% + 0.35rem);
+  top: 52%;
   z-index: 5;
   display: flex;
   align-items: flex-start;
-  gap: 0.15rem;
+  gap: 0.35rem;
   width: max-content;
   pointer-events: none;
   user-select: none;
@@ -191,17 +191,17 @@ a {
 
 .avatar-hint-cursor {
   flex-shrink: 0;
-  filter: drop-shadow(0 6px 10px rgba(91, 33, 182, 0.45));
+  filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.35));
   transform-origin: 7px 5px;
   animation: avatar-cursor-tap 1.85s ease-in-out infinite;
 }
 
 .avatar-hint-text {
-  margin-top: 1.15rem;
+  margin-top: 1.2rem;
   color: var(--purple-bright);
-  font-size: 0.82rem;
+  font-size: 1.12rem;
   font-weight: 700;
-  line-height: 1.25;
+  line-height: 1.28;
   letter-spacing: -0.01em;
   text-align: left;
   text-shadow: 0 0 18px rgba(124, 58, 237, 0.55);
@@ -226,7 +226,7 @@ a {
 
 @media (max-width: 700px) {
   .hero-avatar-frame--hint {
-    margin-bottom: 4.4rem;
+    margin-bottom: 5.2rem;
   }
 
   .avatar-hint {
