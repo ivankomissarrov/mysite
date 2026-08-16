@@ -343,16 +343,20 @@ const orderCatalog = catalog as OrderCatalog;
 
       const postOrder = async () => {
         if (!catalog.endpoint) return false;
+        const googleScript = /script\.google\.com/i.test(catalog.endpoint);
         const controller = new AbortController();
-        const timer = window.setTimeout(() => controller.abort(), 2500);
+        const timer = window.setTimeout(() => controller.abort(), googleScript ? 8000 : 2500);
         try {
           const response = await fetch(catalog.endpoint, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            mode: googleScript ? 'no-cors' : 'cors',
+            headers: {
+              'Content-Type': googleScript ? 'text/plain;charset=utf-8' : 'application/json',
+            },
             body: JSON.stringify(payload),
             signal: controller.signal,
           });
-          return response.ok;
+          return googleScript ? true : response.ok;
         } catch {
           return false;
         } finally {
