@@ -19,7 +19,7 @@ function doPost(e) {
     }
 
     if (payload.type === 'max') {
-      return sendTelegram_(token, chatId, 'Вам скоро напишут в MAX.');
+      return sendTelegram_(token, chatId, 'Вам скоро напишут в MAX');
     }
 
     const phone = String(payload.phone || '').replace(/\D/g, '');

@@ -134,14 +134,7 @@ const menuId = 'messenger-menu';
 
   function openMaxApp(href) {
     notifyMaxClick();
-    const existing = document.querySelector('[data-max-redirect]');
-    if (existing) existing.remove();
-    const frame = document.createElement('iframe');
-    frame.setAttribute('data-max-redirect', '');
-    frame.setAttribute('title', 'max');
-    frame.src = href;
-    frame.hidden = true;
-    document.body.appendChild(frame);
+    window.location.assign(href);
   }
 
   if (!document.documentElement.hasAttribute('data-messenger-bound')) {
@@ -156,7 +149,10 @@ const menuId = 'messenger-menu';
 
     const maxLink = target?.closest('[data-max-app]');
     if (maxLink instanceof HTMLAnchorElement) {
+      event.preventDefault();
       openMaxApp(maxLink.getAttribute('data-max-app') ?? maxLink.href);
+      closeAll(null);
+      return;
     }
 
     if (target?.closest('.messenger-option')) {
