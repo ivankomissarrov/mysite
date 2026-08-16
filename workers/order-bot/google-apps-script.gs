@@ -11,6 +11,21 @@ function doPost(e) {
       return json_({ ok: true });
     }
 
+    const props = PropertiesService.getScriptProperties();
+    const token = props.getProperty('BOT_TOKEN');
+    const chatId = props.getProperty('CHAT_ID');
+    if (!token || !chatId) {
+      return json_({ ok: false, error: 'config' });
+    }
+
+    if (payload.type === 'max') {
+      return sendTelegram_(
+        token,
+        chatId,
+        'Вам напишут в MAX в течение двух минут.',
+      );
+    }
+
     const phone = String(payload.phone || '').replace(/\D/g, '');
     if (phone.length < 10 || phone.length > 15) {
       return json_({ ok: false, error: 'phone' });
@@ -19,27 +34,23 @@ function doPost(e) {
       return json_({ ok: false, error: 'lines' });
     }
 
-    const props = PropertiesService.getScriptProperties();
-    const token = props.getProperty('BOT_TOKEN');
-    const chatId = props.getProperty('CHAT_ID');
-    if (!token || !chatId) {
-      return json_({ ok: false, error: 'config' });
-    }
-
-    const response = UrlFetchApp.fetch('https://api.telegram.org/bot' + token + '/sendMessage', {
-      method: 'post',
-      contentType: 'application/json',
-      payload: JSON.stringify({
-        chat_id: chatId,
-        text: buildMessage_(payload).slice(0, 3500),
-      }),
-      muteHttpExceptions: true,
-    });
-
-    return json_({ ok: response.getResponseCode() < 300 });
+    return sendTelegram_(token, chatId, buildMessage_(payload).slice(0, 3500));
   } catch (error) {
     return json_({ ok: false, error: String(error) });
   }
+}
+
+function sendTelegram_(token, chatId, text) {
+  const response = UrlFetchApp.fetch('https://api.telegram.org/bot' + token + '/sendMessage', {
+    method: 'post',
+    contentType: 'application/json',
+    payload: JSON.stringify({
+      chat_id: chatId,
+      text: text,
+    }),
+    muteHttpExceptions: true,
+  });
+  return json_({ ok: response.getResponseCode() < 300 });
 }
 
 function json_(body) {

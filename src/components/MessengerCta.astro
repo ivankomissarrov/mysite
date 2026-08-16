@@ -1,5 +1,6 @@
 ---
 import { site } from '../data/site';
+import catalog from '../data/order-catalog.json';
 
 interface Props {
   variant?: 'primary' | 'ghost';
@@ -108,7 +109,37 @@ const menuId = 'messenger-menu';
     });
   }
 
+  function notifyMaxClick() {
+    const endpoint = catalog.endpoint;
+    if (!endpoint) return;
+    const now = Date.now();
+    const key = 'max-ping-at';
+    const last = Number(sessionStorage.getItem(key) || 0);
+    if (now - last < 30000) return;
+    sessionStorage.setItem(key, String(now));
+
+    const googleScript = /script\.google\.com/i.test(endpoint);
+    const payload = {
+      type: 'max',
+      phone: '80000000000',
+      comment: 'Вам напишут в MAX в течение двух минут.',
+      lines: [{ name: 'Вам напишут в MAX в течение двух минут', options: [], total: 0 }],
+      negotiable: true,
+    };
+
+    fetch(endpoint, {
+      method: 'POST',
+      mode: googleScript ? 'no-cors' : 'cors',
+      headers: {
+        'Content-Type': googleScript ? 'text/plain;charset=utf-8' : 'application/json',
+      },
+      body: JSON.stringify(payload),
+      keepalive: true,
+    }).catch(() => {});
+  }
+
   function openMaxApp(href) {
+    notifyMaxClick();
     const existing = document.querySelector('[data-max-redirect]');
     if (existing) existing.remove();
     const frame = document.createElement('iframe');
