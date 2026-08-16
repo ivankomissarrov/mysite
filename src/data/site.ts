@@ -4,7 +4,7 @@ export const site = {
   shortName: 'ИК',
   title: 'Иван Комиссаров — геймдизайн и игропрактика',
   description:
-    'Игропрактик и геймдизайнер: образовательные игры, настольный геймдизайн, курсы и конвенты. Сотрудничество — Telegram @IvanKomissarrov.',
+    'Игропрактик и геймдизайнер: образовательные игры, настольный геймдизайн, курсы и конвенты. Сотрудничество — Telegram @IvanKomissarov.',
   locale: 'ru_RU',
   language: 'ru',
   author: {
@@ -16,12 +16,12 @@ export const site = {
     jobTitle: 'Игропрактик и геймдизайнер',
     sameAs: [
       'https://vk.ru/ivankomissarrov',
-      'https://t.me/IvanKomissarrov',
+      'https://t.me/IvanKomissarov',
       'https://github.com/ivankomissarrov',
     ],
   },
-  telegram: 'https://t.me/IvanKomissarrov',
-  telegramHandle: '@IvanKomissarrov',
+  telegram: 'https://t.me/IvanKomissarov',
+  telegramHandle: '@IvanKomissarov',
   phone: '8 (925) 235 56 12',
   phoneTel: '+79252355612',
   vk: 'https://vk.ru/ivankomissarrov',
@@ -90,7 +90,7 @@ export const site = {
   },
   messengers: [
     { id: 'vk', name: 'ВКонтакте', href: 'https://vk.ru/ivankomissarrov', note: 'vk.ru/ivankomissarrov' },
-    { id: 'telegram', name: 'Telegram', href: 'https://t.me/IvanKomissarrov', note: '@IvanKomissarrov' },
+    { id: 'telegram', name: 'Telegram', href: 'https://t.me/IvanKomissarov', note: '@IvanKomissarov' },
     {
       id: 'max',
       name: 'MAX',
@@ -106,7 +106,7 @@ export const site = {
     { value: '3 000+', label: 'посетителей ивентов в сфере игр' },
   ],
   contacts: [
-    { href: 'https://t.me/IvanKomissarrov', label: 'Telegram' },
+    { href: 'https://t.me/IvanKomissarov', label: 'Telegram' },
     { href: 'https://vk.ru/ivankomissarrov', label: 'ВКонтакте' },
   ],
   avatarHint: ['адаптируюсь под ваш проект.', 'проверьте! (клик на аватар)'],

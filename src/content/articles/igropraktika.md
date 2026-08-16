@@ -18,7 +18,7 @@ cover: '/images/articles/igropraktika-1.jpg'
 
 **Нужна консультация по вашей настолке?** Помогу увидеть сильные и слабые стороны механик и предложить, как их усилить.
 
-Вопросы — в Telegram [@IvanKomissarrov](https://t.me/IvanKomissarrov).
+Вопросы — в Telegram [@IvanKomissarov](https://t.me/IvanKomissarov).
 
 ![Работа за столом с прототипами](/images/articles/igropraktika-2.jpg)
 

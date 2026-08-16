@@ -98,7 +98,7 @@
     <script>
       const starter = {
         endpoint: '',
-        telegramShare: 'https://t.me/IvanKomissarrov',
+        telegramShare: 'https://t.me/IvanKomissarov',
         currency: 'RUB',
         variancePercent: 20,
         varianceNote: 'Цена ориентировочная и может варьироваться в пределах 20%',
@@ -204,7 +204,7 @@
         const data = raw && typeof raw === 'object' ? raw : {};
         return {
           endpoint: String(data.endpoint ?? ''),
-          telegramShare: String(data.telegramShare ?? 'https://t.me/IvanKomissarrov'),
+          telegramShare: String(data.telegramShare ?? 'https://t.me/IvanKomissarov'),
           currency: String(data.currency ?? 'RUB'),
           variancePercent: num(data.variancePercent) || 20,
           varianceNote: String(data.varianceNote ?? starter.varianceNote),
@@ -282,7 +282,7 @@
                 <input data-path="endpoint" value="${esc(state.endpoint)}" placeholder="https://your-app.timeweb.cloud" />
               </label>
               <label>Чат Telegram для заявки
-                <input data-path="telegramShare" value="${esc(state.telegramShare)}" placeholder="https://t.me/IvanKomissarrov" />
+                <input data-path="telegramShare" value="${esc(state.telegramShare)}" placeholder="https://t.me/IvanKomissarov" />
               </label>
               <div class="row">
                 <label>Валюта
