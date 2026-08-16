@@ -100,9 +100,9 @@ export const site = {
     },
   ],
   stats: [
-    { value: '10 000', label: 'экземпляров игр моего авторства' },
+    { value: '10 000+', label: 'экземпляров игр моего авторства' },
     { value: '97', label: 'коммерческих проектов' },
-    { value: '200+', label: 'педагогов на курсах' },
+    { value: '3 000+', label: 'посетителей ивентов в сфере игр' },
   ],
   contacts: [
     { href: 'https://t.me/IvanKomissarrov', label: 'Telegram' },
