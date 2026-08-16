@@ -1236,6 +1236,24 @@ a.messenger-option-name {
   border-color: var(--border-strong);
 }
 
+.order-consent {
+  margin: 0.2rem 0 0.4rem;
+  grid-template-columns: auto 1fr;
+}
+
+.order-consent input {
+  width: 1.15rem;
+  height: 1.15rem;
+  accent-color: var(--purple);
+}
+
+.order-consent span {
+  color: var(--text);
+  font-size: 0.92rem;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
 .order-contacts {
   display: grid;
   grid-template-columns: 1fr 1fr;

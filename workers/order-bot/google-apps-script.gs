@@ -103,6 +103,7 @@ function buildMessage_(payload) {
     totalLine,
     '(ориентировочно, ±' + variance + '%)',
     '',
+    'Имя: ' + (String(payload.name || '').trim() || '—'),
     'Телефон: ' + (String(payload.phone || '').trim() || '—'),
     'Мессенджер: ' + (String(payload.messenger || '').trim() || '—'),
     'Комментарий: ' + (String(payload.comment || '').trim() || '—'),

@@ -142,7 +142,7 @@ export function formatLineDetail(line: QuotedLine): string {
 export function buildOrderMessage(
   catalog: OrderCatalog,
   quote: OrderQuote,
-  contacts: { phone: string; messenger: string; comment: string },
+  contacts: { name: string; phone: string; messenger: string; comment: string },
 ): string {
   const blocks = quote.lines.map((line, index) => {
     const n = index + 1;
@@ -174,6 +174,7 @@ export function buildOrderMessage(
     totalLine,
     `(ориентировочно, ±${catalog.variancePercent}%)`,
     '',
+    `Имя: ${contacts.name || '—'}`,
     `Телефон: ${contacts.phone}`,
     `Мессенджер: ${contacts.messenger || '—'}`,
     `Комментарий: ${contacts.comment || '—'}`,

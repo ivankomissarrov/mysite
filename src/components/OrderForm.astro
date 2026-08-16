@@ -6,6 +6,16 @@ const orderCatalog = catalog as OrderCatalog;
 ---
 
 <form class="order-form" data-order-form novalidate>
+  <label class="order-field">
+    <span>Имя</span>
+    <input name="name" type="text" required autocomplete="name" placeholder="Как к вам обращаться" />
+  </label>
+
+  <label class="order-check order-consent">
+    <input name="consent" type="checkbox" required />
+    <span>Согласие на обработку персональных данных</span>
+  </label>
+
   <div class="order-lines" data-lines></div>
   <button class="btn btn-ghost order-add" type="button" data-add-line>Добавить позицию</button>
 
@@ -290,9 +300,21 @@ const orderCatalog = catalog as OrderCatalog;
         return;
       }
 
+      const name = String(data.get('name') ?? '').trim();
       const phone = String(data.get('phone') ?? '').trim();
       const messenger = String(data.get('messenger') ?? '').trim();
       const comment = String(data.get('comment') ?? '').trim();
+      const consent = data.get('consent') === 'on';
+      if (!name) {
+        setStatus(form, 'Укажите имя.', 'err');
+        form.querySelector<HTMLInputElement>('[name="name"]')?.focus();
+        return;
+      }
+      if (!consent) {
+        setStatus(form, 'Нужно согласие на обработку персональных данных.', 'err');
+        form.querySelector<HTMLInputElement>('[name="consent"]')?.focus();
+        return;
+      }
       if (!isValidPhone(phone)) {
         setStatus(form, 'Укажите телефон — не меньше 10 цифр.', 'err');
         form.querySelector<HTMLInputElement>('[name="phone"]')?.focus();
@@ -300,11 +322,13 @@ const orderCatalog = catalog as OrderCatalog;
       }
 
       const quote = updateQuote(form);
-      const message = buildOrderMessage(catalog, quote, { phone, messenger, comment });
+      const message = buildOrderMessage(catalog, quote, { name, phone, messenger, comment });
       const payload = {
+        name,
         phone,
         messenger,
         comment,
+        consent: true,
         website: String(data.get('website') ?? ''),
         lines: quote.lines.map((line) => ({
           name: line.product.name,
