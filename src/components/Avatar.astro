@@ -8,6 +8,7 @@ interface Props {
   priority?: boolean;
   decorative?: boolean;
   plain?: boolean;
+  hint?: boolean;
 }
 
 const {
@@ -17,7 +18,10 @@ const {
   priority = false,
   decorative = false,
   plain = false,
+  hint = false,
 } = Astro.props;
+
+const hintParts = site.avatarHint.split(/,\s*/);
 ---
 
 {
@@ -35,6 +39,7 @@ const {
       </div>
     </div>
   ) : (
+<div class:list={['hero-avatar-frame', { 'hero-avatar-frame--hint': hint }]}>
 <button
   class={className}
   type="button"
@@ -89,6 +94,27 @@ const {
     </span>
   </div>
 </button>
+{
+  hint && (
+    <span class="avatar-hint" aria-hidden="true">
+      <svg class="avatar-hint-cursor" viewBox="0 0 32 32" width="42" height="42">
+        <path
+          fill="#fff"
+          stroke="#6d28d9"
+          stroke-width="1.6"
+          stroke-linejoin="round"
+          d="M6.2 3.4v21.6l5.3-5.1 3.6 8.5 3.4-1.4-3.5-8.3 7.1-.2Z"
+        />
+      </svg>
+      <span class="avatar-hint-text">
+        {hintParts[0]},
+        {hintParts[1] && <br />}
+        {hintParts[1]}
+      </span>
+    </span>
+  )
+}
+</div>
   )
 }
 
