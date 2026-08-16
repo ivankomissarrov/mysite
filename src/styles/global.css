@@ -1010,6 +1010,10 @@ a.messenger-option-name {
   max-width: 46rem;
 }
 
+.privacy-doc {
+  margin-inline: auto;
+}
+
 .prose :is(h1, h2, h3) {
   font-family: var(--font-display);
   line-height: 1.2;
@@ -1022,6 +1026,11 @@ a.messenger-option-name {
 .prose p,
 .prose li {
   color: #e8e4f4;
+}
+
+.prose ul {
+  margin: 0.75rem 0 1rem;
+  padding-left: 1.25rem;
 }
 
 .prose a {
@@ -1252,6 +1261,12 @@ a.messenger-option-name {
   font-size: 0.92rem;
   letter-spacing: 0;
   text-transform: none;
+}
+
+.order-consent a {
+  color: var(--purple-bright);
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
 }
 
 .order-contacts {

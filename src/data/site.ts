@@ -11,6 +11,8 @@ export const site = {
     name: 'Иван Комиссаров',
     givenName: 'Иван',
     familyName: 'Комиссаров',
+    patronymic: 'Андреевич',
+    legalName: 'Комиссаров Иван Андреевич',
     jobTitle: 'Игропрактик и геймдизайнер',
     sameAs: [
       'https://vk.ru/ivankomissarrov',
@@ -82,6 +84,7 @@ export const site = {
     write: { href: '#messengers', label: 'Написать в мессенджере' },
     order: { href: '/order/', label: 'Рассчитать заказ' },
     work: { href: '/about/', label: 'Портфолио и опыт' },
+    privacy: { href: '/privacy/', label: 'Персональные данные' },
   },
   messengers: [
     { id: 'vk', name: 'ВКонтакте', href: 'https://vk.ru/ivankomissarrov', note: 'vk.ru/ivankomissarrov' },
