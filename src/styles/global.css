@@ -178,7 +178,7 @@ a {
 
 .avatar-hint {
   position: absolute;
-  left: calc(100% + 0.35rem);
+  left: calc(100% - 14px);
   top: 52%;
   z-index: 5;
   display: flex;
