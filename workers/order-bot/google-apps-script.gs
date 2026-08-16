@@ -1,4 +1,9 @@
-function doGet() {
+function doGet(e) {
+  try {
+    if (e && e.parameter && e.parameter.type === 'max') {
+      pingMax_();
+    }
+  } catch (error) {}
   return ContentService.createTextOutput('ok');
 }
 
@@ -19,7 +24,7 @@ function doPost(e) {
     }
 
     if (payload.type === 'max') {
-      return sendTelegram_(token, chatId, 'Вам скоро напишут в MAX');
+      return pingMax_();
     }
 
     const phone = String(payload.phone || '').replace(/\D/g, '');
@@ -47,6 +52,14 @@ function sendTelegram_(token, chatId, text) {
     muteHttpExceptions: true,
   });
   return json_({ ok: response.getResponseCode() < 300 });
+}
+
+function pingMax_() {
+  const props = PropertiesService.getScriptProperties();
+  const token = props.getProperty('BOT_TOKEN');
+  const chatId = props.getProperty('CHAT_ID');
+  if (!token || !chatId) return json_({ ok: false, error: 'config' });
+  return sendTelegram_(token, chatId, 'Вам скоро напишут в MAX');
 }
 
 function json_(body) {

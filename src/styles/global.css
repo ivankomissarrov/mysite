@@ -572,6 +572,10 @@ html.is-mobile .messenger-item--mobile:not([hidden]) {
   color: #0077ff;
 }
 
+.messenger-option--max {
+  cursor: pointer;
+}
+
 .messenger-option--max .messenger-option-mark {
   background: transparent;
 }

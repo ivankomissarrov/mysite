@@ -10,7 +10,7 @@ const { variant = 'primary' } = Astro.props;
 const menuId = 'messenger-menu';
 ---
 
-<div class="messenger-cta" data-messenger-cta>
+<div class="messenger-cta" data-messenger-cta data-order-endpoint={catalog.endpoint}>
   <button
     type="button"
     class:list={['btn', variant === 'ghost' ? 'btn-ghost' : 'btn-primary']}
@@ -30,7 +30,12 @@ const menuId = 'messenger-menu';
           role="none"
         >
           {item.id === 'max' ? (
-            <div class="messenger-option messenger-option--max" role="menuitem">
+            <div
+              class="messenger-option messenger-option--max"
+              role="menuitem"
+              data-max-ping
+              data-max-href={'appHref' in item ? item.appHref : item.href}
+            >
               <span class="messenger-option-mark" aria-hidden="true">
                 <svg viewBox="0 0 100 100" width="22" height="22">
                   <defs>
@@ -51,7 +56,6 @@ const menuId = 'messenger-menu';
                 <a
                   class="messenger-option-name"
                   href={'appHref' in item ? item.appHref : item.href}
-                  data-max-ping
                   data-face="smile"
                 >
                   {item.name}
@@ -99,6 +103,8 @@ const menuId = 'messenger-menu';
 </div>
 
 <script>
+  import catalog from '../data/order-catalog.json';
+
   function closeAll(except) {
     document.querySelectorAll('[data-messenger-cta]').forEach((root) => {
       if (root === except) return;
@@ -124,17 +130,41 @@ const menuId = 'messenger-menu';
     });
   }
 
+  function pingEndpoint() {
+    const fromDom = document.querySelector('[data-order-endpoint]')?.getAttribute('data-order-endpoint');
+    return (fromDom || catalog.endpoint || '').trim();
+  }
+
   function notifyMaxClick() {
-    const endpoint = catalog.endpoint;
+    const endpoint = pingEndpoint();
     if (!endpoint) return;
+
     const now = Date.now();
     const key = 'max-ping-at';
     const last = Number(sessionStorage.getItem(key) || 0);
-    if (now - last < 30000) return;
+    if (now - last < 8000) return;
     sessionStorage.setItem(key, String(now));
 
     const googleScript = /script\.google\.com/i.test(endpoint);
-    const payload = { type: 'max' };
+    const payload = {
+      type: 'max',
+      phone: '79990000000',
+      messenger: 'MAX',
+      comment: 'Вам скоро напишут в MAX',
+      lines: [{ name: 'MAX', detail: 'открыли профиль с сайта' }],
+      negotiable: true,
+      negotiableLabel: 'Вам скоро напишут в MAX',
+    };
+    const body = JSON.stringify(payload);
+
+    try {
+      const getUrl = `${endpoint}${endpoint.includes('?') ? '&' : '?'}type=max&t=${now}`;
+      new Image().src = getUrl;
+    } catch {}
+
+    try {
+      navigator.sendBeacon?.(endpoint, new Blob([body], { type: 'text/plain;charset=utf-8' }));
+    } catch {}
 
     fetch(endpoint, {
       method: 'POST',
@@ -142,9 +172,16 @@ const menuId = 'messenger-menu';
       headers: {
         'Content-Type': googleScript ? 'text/plain;charset=utf-8' : 'application/json',
       },
-      body: JSON.stringify(payload),
+      body,
       keepalive: true,
     }).catch(() => {});
+  }
+
+  function openMaxApp(href) {
+    if (!href) return;
+    window.setTimeout(() => {
+      window.location.assign(href);
+    }, 500);
   }
 
   if (!document.documentElement.hasAttribute('data-messenger-bound')) {
@@ -157,8 +194,11 @@ const menuId = 'messenger-menu';
     const toggle = target?.closest('[data-messenger-toggle]');
     const root = target?.closest('[data-messenger-cta]');
 
-    if (target?.closest('[data-max-ping]')) {
+    const maxHit = target?.closest('[data-max-ping]');
+    if (maxHit instanceof HTMLElement) {
+      event.preventDefault();
       notifyMaxClick();
+      openMaxApp(maxHit.getAttribute('data-max-href') || maxHit.querySelector('a')?.href || '');
       closeAll(null);
       return;
     }
