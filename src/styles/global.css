@@ -467,6 +467,22 @@ body:has([data-face='old']:hover) .hero-avatar:not(.is-morphing) .avatar-swap {
   flex-wrap: wrap;
 }
 
+@media (max-width: 700px) {
+  .actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .actions .messenger-cta,
+  .actions > .btn {
+    width: 100%;
+  }
+
+  .actions .messenger-cta .btn {
+    width: 100%;
+  }
+}
+
 .btn {
   display: inline-flex;
   align-items: center;
