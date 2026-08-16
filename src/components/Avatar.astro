@@ -20,8 +20,6 @@ const {
   plain = false,
   hint = false,
 } = Astro.props;
-
-const hintParts = site.avatarHint.split(/,\s*/);
 ---
 
 {
@@ -107,9 +105,9 @@ const hintParts = site.avatarHint.split(/,\s*/);
         />
       </svg>
       <span class="avatar-hint-text">
-        {hintParts[0]},
-        {hintParts[1] && <br />}
-        {hintParts[1]}
+        {site.avatarHint[0]}
+        <br />
+        {site.avatarHint[1]}
       </span>
     </span>
   )
