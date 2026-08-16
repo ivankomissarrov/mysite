@@ -89,7 +89,8 @@ export const site = {
     {
       id: 'max',
       name: 'MAX',
-      href: 'max://max.ru/u/f9LHodD0cOIacvQRw_4sc_Vytab9DUJToOfdGK906C0Uis0W8mH7hHZPN38',
+      href: 'https://max.ru/u/f9LHodD0cOIacvQRw_4sc_Vytab9DUJToOfdGK906C0Uis0W8mH7hHZPN38',
+      appHref: 'max://max.ru/u/f9LHodD0cOIacvQRw_4sc_Vytab9DUJToOfdGK906C0Uis0W8mH7hHZPN38',
       note: '8 (925) 235 56 12',
       mobileOnly: true,
     },

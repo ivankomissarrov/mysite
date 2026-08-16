@@ -592,6 +592,13 @@ html.is-mobile .messenger-item--mobile:not([hidden]) {
   line-height: 1.2;
 }
 
+a.messenger-option-name {
+  color: inherit;
+  width: fit-content;
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+}
+
 .messenger-option-note {
   color: var(--text-muted);
   font-size: 0.82rem;
