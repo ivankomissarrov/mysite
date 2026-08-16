@@ -1254,23 +1254,53 @@ a.messenger-option-name {
 }
 
 .footer-inner {
-  display: flex;
-  justify-content: space-between;
-  gap: 1rem;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.65rem 2rem;
+  align-items: start;
 }
 
-.footer-links {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.35rem 1.1rem;
+.footer-inner p {
+  margin: 0;
 }
 
+.footer-copy {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.footer-links,
 .footer-legal {
   display: flex;
   flex-wrap: wrap;
   gap: 0.35rem 1.1rem;
-  flex-basis: 100%;
+  grid-column: 2;
+  justify-content: flex-end;
+}
+
+.footer-links {
+  grid-row: 1;
+}
+
+.footer-legal {
+  grid-row: 2;
+}
+
+@media (max-width: 700px) {
+  .footer-inner {
+    grid-template-columns: 1fr;
+  }
+
+  .footer-copy,
+  .footer-links,
+  .footer-legal {
+    grid-column: 1;
+  }
+
+  .footer-links,
+  .footer-legal {
+    justify-content: flex-start;
+  }
 }
 
 .glow-orb {
