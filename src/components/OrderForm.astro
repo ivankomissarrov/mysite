@@ -12,13 +12,13 @@ const orderCatalog = catalog as OrderCatalog;
     <input name="name" type="text" required autocomplete="name" placeholder="Как к вам обращаться" />
   </label>
 
-  <label class="order-check order-consent">
-    <input name="consent" type="checkbox" required />
-    <span>
-      Согласен на обработку персональных данных согласно
-      <a href={site.cta.privacy.href}>политике</a>
-    </span>
-  </label>
+  <div class="order-check order-consent">
+    <input id="order-consent" name="consent" type="checkbox" required />
+    <p class="order-consent-text">
+      <label for="order-consent">Согласен с </label>
+      <a href={site.cta.privacy.href}>политикой обработки персональных данных</a>
+    </p>
+  </div>
 
   <div class="order-lines" data-lines></div>
   <button class="btn btn-ghost order-add" type="button" data-add-line>Добавить позицию</button>
@@ -231,10 +231,6 @@ const orderCatalog = catalog as OrderCatalog;
     if (lines.length === 0) lines = [defaultLine()];
     renderLines(list);
     updateQuote(form);
-
-    form.querySelector('.order-consent a')?.addEventListener('click', (event) => {
-      event.stopPropagation();
-    });
 
     list.addEventListener('change', (event) => {
       const target = event.target;

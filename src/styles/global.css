@@ -1248,6 +1248,7 @@ a.messenger-option-name {
 .order-consent {
   margin: 0.2rem 0 0.4rem;
   grid-template-columns: auto 1fr;
+  cursor: default;
 }
 
 .order-consent input {
@@ -1256,11 +1257,16 @@ a.messenger-option-name {
   accent-color: var(--purple);
 }
 
-.order-consent span {
+.order-consent-text {
+  margin: 0;
   color: var(--text);
   font-size: 0.92rem;
   letter-spacing: 0;
-  text-transform: none;
+  line-height: 1.4;
+}
+
+.order-consent-text label {
+  cursor: pointer;
 }
 
 .order-consent a {
