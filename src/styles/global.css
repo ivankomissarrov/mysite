@@ -1236,14 +1236,10 @@ a.messenger-option-name {
   border-color: var(--border-strong);
 }
 
-.order-field small {
-  color: var(--text-dim);
-  font-size: 0.82rem;
-}
-
 .order-contacts {
   display: grid;
   grid-template-columns: 1fr 1fr;
+  align-items: start;
   gap: 1rem;
 }
 
