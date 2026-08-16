@@ -599,8 +599,7 @@ html.is-mobile .messenger-item--mobile:not([hidden]) {
 a.messenger-option-name {
   color: inherit;
   width: fit-content;
-  text-decoration: underline;
-  text-underline-offset: 0.18em;
+  text-decoration: none;
 }
 
 .messenger-option-note {
