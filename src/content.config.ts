@@ -11,6 +11,7 @@ const articles = defineCollection({
     updatedDate: z.coerce.date().optional(),
     tags: z.array(z.string()).default([]),
     cover: z.string().optional(),
+    vkPostId: z.number().int().optional(),
     draft: z.boolean().default(false),
   }),
 });
