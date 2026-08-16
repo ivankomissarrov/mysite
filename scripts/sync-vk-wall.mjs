@@ -330,7 +330,8 @@ ${figures ? `${figures}\n\n` : ''}${post.text}
 async function main() {
   const state = JSON.parse(await readFile(statePath, 'utf8'));
   const existing = await loadExisting();
-  const known = new Set([...(state.importedIds ?? []), ...existing.vkIds]);
+  const skipped = new Set(state.skippedIds ?? []);
+  const known = new Set([...(state.importedIds ?? []), ...existing.vkIds, ...skipped]);
   const wall = [];
   for (let page = 0; page < MAX_PAGES; page += 1) {
     const html = await fetchWallPage(state.ownerId, page * PAGE_SIZE);
@@ -368,6 +369,7 @@ async function main() {
   }
 
   state.importedIds = [...known].sort((a, b) => a - b);
+  state.skippedIds = [...skipped].sort((a, b) => a - b);
   await writeFile(statePath, `${JSON.stringify(state, null, 2)}\n`);
   if (created.length === 0) console.log('vk: no new posts');
   else console.log(`vk: imported ${created.length} post(s)`);
