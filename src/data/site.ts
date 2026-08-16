@@ -83,6 +83,7 @@ export const site = {
   cta: {
     write: { href: '#messengers', label: 'Написать в мессенджере' },
     order: { href: '/order/', label: 'Рассчитать заказ' },
+    services: { href: '/services/', label: 'Описание услуг' },
     work: { href: '/about/', label: 'Портфолио и опыт' },
     privacy: { href: '/privacy/', label: 'Политика обработки персональных данных' },
     confidentiality: { href: '/confidentiality/', label: 'Политика конфиденциальности' },

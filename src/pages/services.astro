@@ -1,0 +1,71 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import MessengerCta from '../components/MessengerCta.astro';
+import catalogJson from '../data/order-catalog.json';
+import { serviceCopy, servicesIntro } from '../data/services';
+import { site } from '../data/site';
+import { formatRub, formatRubFrom, type OrderCatalog } from '../lib/order';
+
+const catalog = catalogJson as OrderCatalog;
+
+function priceLabel(product: OrderCatalog['products'][number]): string {
+  if (product.kind === 'hours' && product.hourlyRate) {
+    return `${formatRub(product.hourlyRate)} / час`;
+  }
+  if (product.kind === 'custom' || !product.basePrice) {
+    return catalog.negotiableLabel;
+  }
+  return formatRubFrom(product.basePrice);
+}
+
+const services = catalog.products.map((product) => ({
+  ...product,
+  summary: serviceCopy[product.id] ?? '',
+  price: priceLabel(product),
+}));
+---
+
+<BaseLayout
+  title="Описание услуг"
+  description="Настольные игры под ключ, доработка прототипов, курсы, живые игры и тимбилдинги. Ориентировочные цены и состав услуг Ивана Комиссарова."
+  path={site.cta.services.href}
+>
+  <section class="page-hero wrap">
+    <p class="hero-kicker">Услуги</p>
+    <h1 class="page-title">
+      Описание <span class="gradient-text">услуг</span>
+    </h1>
+    <p class="lede">{servicesIntro}</p>
+  </section>
+
+  <section class="section wrap">
+    <div class="services-grid">
+      {
+        services.map((service) => (
+          <article class="card service-card">
+            <h2>{service.name}</h2>
+            <p class="service-price gradient-text">{service.price}</p>
+            {service.summary && <p>{service.summary}</p>}
+            {service.options && service.options.length > 0 && (
+              <ul>
+                {service.options.map((option) => (
+                  <li>
+                    {option.name}
+                    <span> + {formatRub(option.price)}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </article>
+        ))
+      }
+    </div>
+    <p class="services-note">{catalog.varianceNote}.</p>
+    <div class="actions services-cta">
+      <a class="btn btn-primary" href={site.cta.order.href} data-face="smile">
+        {site.cta.order.label}
+      </a>
+      <MessengerCta variant="ghost" />
+    </div>
+  </section>
+</BaseLayout>

@@ -467,10 +467,33 @@ body:has([data-face='old']:hover) .hero-avatar:not(.is-morphing) .avatar-swap {
   flex-wrap: wrap;
 }
 
+@media (max-width: 1100px) {
+  .hero .actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    max-width: 38rem;
+    margin-inline: auto;
+  }
+
+  .hero .actions .messenger-cta,
+  .hero .actions > .btn {
+    width: 100%;
+  }
+
+  .hero .actions .messenger-cta .btn {
+    width: 100%;
+  }
+}
+
 @media (max-width: 700px) {
   .actions {
     flex-direction: column;
     align-items: stretch;
+  }
+
+  .hero .actions {
+    grid-template-columns: 1fr;
+    max-width: none;
   }
 
   .actions .messenger-cta,
@@ -1233,6 +1256,64 @@ a.messenger-option-name {
 
   .partner--altairika {
     justify-content: center;
+  }
+}
+
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.service-card:last-child {
+  grid-column: 1 / -1;
+}
+
+.service-card {
+  display: grid;
+  gap: 0.7rem;
+  align-content: start;
+}
+
+.service-card h2 {
+  font-family: var(--font-display);
+  font-size: 1.12rem;
+  line-height: 1.25;
+  margin: 0;
+}
+
+.service-price {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.service-card ul {
+  margin: 0;
+  padding-left: 1.15rem;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+}
+
+.service-card li span {
+  color: var(--text-dim);
+}
+
+.services-note {
+  max-width: 36rem;
+  margin: 1.6rem auto 0;
+  text-align: center;
+  color: var(--text-muted);
+}
+
+.services-cta {
+  margin-top: 1.8rem;
+}
+
+@media (max-width: 700px) {
+  .services-grid {
+    grid-template-columns: 1fr;
   }
 }
 
