@@ -1089,6 +1089,13 @@ a.messenger-option-name {
   gap: 0.35rem 1.1rem;
 }
 
+.footer-legal {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 1.1rem;
+  flex-basis: 100%;
+}
+
 .glow-orb {
   position: absolute;
   width: 220px;

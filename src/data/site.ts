@@ -84,8 +84,8 @@ export const site = {
     write: { href: '#messengers', label: 'Написать в мессенджере' },
     order: { href: '/order/', label: 'Рассчитать заказ' },
     work: { href: '/about/', label: 'Портфолио и опыт' },
-    privacy: { href: '/privacy/', label: 'Персональные данные' },
-    confidentiality: { href: '/confidentiality/', label: 'Конфиденциальность' },
+    privacy: { href: '/privacy/', label: 'Политика обработки персональных данных' },
+    confidentiality: { href: '/confidentiality/', label: 'Политика конфиденциальности' },
   },
   messengers: [
     { id: 'vk', name: 'ВКонтакте', href: 'https://vk.ru/ivankomissarrov', note: 'vk.ru/ivankomissarrov' },
