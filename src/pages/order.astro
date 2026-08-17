@@ -5,8 +5,12 @@ import OrderForm from '../components/OrderForm.astro';
 
 <BaseLayout
   title="Рассчитать заказ"
-  description="Выберите тип продукта и опции — ориентировочная цена появится сразу. Заявку можно отправить с сайта."
+  description="Иван Комиссаров: рассчитайте заказ на настольную игру, курс, консультацию или игровой формат. Ориентировочная цена появится сразу."
   path="/order/"
+  breadcrumbs={[
+    { name: 'Главная', href: '/' },
+    { name: 'Рассчитать заказ', href: '/order/' },
+  ]}
 >
   <section class="page-hero wrap">
     <p class="hero-kicker">Заявка</p>

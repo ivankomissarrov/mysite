@@ -4,15 +4,31 @@ import { ClientRouter } from 'astro:transitions';
 import { site } from '../data/site';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import {
+  articleNode,
+  breadcrumbNode,
+  graphJsonLd,
+  profilePageNode,
+  type Breadcrumb,
+} from '../lib/seo';
 
 interface Props {
   title?: string;
   description?: string;
-  type?: 'website' | 'article';
+  type?: 'website' | 'article' | 'profile';
   publishedTime?: string;
   updatedTime?: string;
   path?: string;
   image?: string;
+  breadcrumbs?: Breadcrumb[];
+  article?: {
+    title: string;
+    description: string;
+    url: string;
+    published: string;
+    updated: string;
+    cover?: string;
+  };
 }
 
 const {
@@ -23,36 +39,21 @@ const {
   updatedTime,
   path = Astro.url.pathname,
   image,
+  breadcrumbs,
+  article,
 } = Astro.props;
 
 const canonical = new URL(path, site.url).href;
 const pageTitle = title === site.title ? title : `${title} — ${site.name}`;
 const imageUrl = new URL(image ?? site.avatar, site.url).href;
-const jsonLd = {
-  '@context': 'https://schema.org',
-  '@graph': [
-    {
-      '@type': 'WebSite',
-      '@id': `${site.url}/#website`,
-      url: site.url,
-      name: site.name,
-      inLanguage: site.language,
-      publisher: { '@id': `${site.url}/#person` },
-    },
-    {
-      '@type': 'Person',
-      '@id': `${site.url}/#person`,
-      name: site.author.name,
-      givenName: site.author.givenName,
-      familyName: site.author.familyName,
-      url: site.url,
-      jobTitle: site.author.jobTitle,
-      telephone: site.phoneTel,
-      image: new URL(site.avatar, site.url).href,
-      sameAs: site.author.sameAs,
-    },
-  ],
-};
+const ogType = type === 'article' ? 'article' : type === 'profile' ? 'profile' : 'website';
+const extra = [
+  ...(type === 'profile' ? [profilePageNode()] : []),
+  ...(breadcrumbs?.length ? [breadcrumbNode(breadcrumbs)] : []),
+  ...(article ? [articleNode(article)] : []),
+];
+const jsonLd = graphJsonLd(extra);
+const keywords = site.seo.keywords.join(', ');
 ---
 
 <!doctype html>
@@ -62,21 +63,33 @@ const jsonLd = {
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{pageTitle}</title>
     <meta name="description" content={description} />
+    <meta name="keywords" content={keywords} />
     <meta name="author" content={site.name} />
-    <meta name="robots" content="index,follow" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
+    {site.seo.yandexVerification && <meta name="yandex-verification" content={site.seo.yandexVerification} />}
     <link rel="canonical" href={canonical} />
+    <link rel="alternate" hreflang="ru" href={canonical} />
+    <link rel="alternate" hreflang="x-default" href={canonical} />
+    <link rel="author" href={site.url} />
     <link rel="alternate" type="application/rss+xml" title={site.title} href="/rss.xml" />
+    <link rel="alternate" type="text/plain" title="llms.txt" href="/llms.txt" />
+    {site.author.sameAs.map((href) => <link rel="me" href={href} />)}
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta property="og:type" content={type} />
+    <meta property="og:type" content={ogType} />
     <meta property="og:locale" content={site.locale} />
     <meta property="og:site_name" content={site.name} />
     <meta property="og:title" content={pageTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
+    {ogType === 'profile' && <meta property="profile:first_name" content={site.author.givenName} />}
+    {ogType === 'profile' && <meta property="profile:last_name" content={site.author.familyName} />}
+    {ogType === 'profile' && <meta property="profile:username" content="ivankomissarrov" />}
     {publishedTime && <meta property="article:published_time" content={publishedTime} />}
     {updatedTime && <meta property="article:modified_time" content={updatedTime} />}
     {imageUrl && <meta property="og:image" content={imageUrl} />}
+    {imageUrl && <meta property="og:image:alt" content={site.seo.imageAlt} />}
     {imageUrl && <meta name="twitter:image" content={imageUrl} />}
+    {imageUrl && <meta name="twitter:image:alt" content={site.seo.imageAlt} />}
     <meta name="twitter:card" content={imageUrl ? 'summary_large_image' : 'summary'} />
     <meta name="twitter:title" content={pageTitle} />
     <meta name="twitter:description" content={description} />

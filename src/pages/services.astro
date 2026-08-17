@@ -29,6 +29,10 @@ const services = catalog.products.map((product) => ({
   title="Описание услуг"
   description="Настольные игры под ключ, доработка прототипов, курсы, живые игры и тимбилдинги. Ориентировочные цены и состав услуг Ивана Комиссарова."
   path={site.cta.services.href}
+  breadcrumbs={[
+    { name: 'Главная', href: '/' },
+    { name: 'Описание услуг', href: site.cta.services.href },
+  ]}
 >
   <section class="page-hero wrap">
     <p class="hero-kicker">Услуги</p>

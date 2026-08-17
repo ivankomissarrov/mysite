@@ -22,24 +22,7 @@ const formatted = article.data.pubDate.toLocaleDateString('ru-RU', {
   day: 'numeric',
 });
 
-const articleLd = {
-  '@context': 'https://schema.org',
-  '@type': 'Article',
-  headline: article.data.title,
-  description: article.data.description,
-  datePublished: published,
-  dateModified: updated,
-  inLanguage: site.language,
-  author: {
-    '@type': 'Person',
-    name: site.author.name,
-    url: site.url,
-  },
-  mainEntityOfPage: new URL(articlePath(article), site.url).href,
-  ...(article.data.cover
-    ? { image: new URL(article.data.cover, site.url).href }
-    : {}),
-};
+const articleLdPath = articlePath(article);
 ---
 
 <BaseLayout
@@ -48,12 +31,21 @@ const articleLd = {
   type="article"
   publishedTime={published}
   updatedTime={updated}
-  path={articlePath(article)}
+  path={articleLdPath}
   image={article.data.cover}
+  breadcrumbs={[
+    { name: 'Главная', href: '/' },
+    { name: article.data.title, href: articleLdPath },
+  ]}
+  article={{
+    title: article.data.title,
+    description: article.data.description,
+    url: new URL(articleLdPath, site.url).href,
+    published,
+    updated,
+    cover: article.data.cover,
+  }}
 >
-  <Fragment slot="head">
-    <script type="application/ld+json" set:html={JSON.stringify(articleLd)} />
-  </Fragment>
 
   <article class="wrap">
     <header class="article-header">

@@ -2,6 +2,8 @@
 import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 
+const siteUrl = 'https://ivankomissarrov.github.io';
+
 function rehypeLazyImages() {
   return (tree) => {
     let first = true;
@@ -25,7 +27,7 @@ function rehypeLazyImages() {
 }
 
 export default defineConfig({
-  site: 'https://ivankomissarrov.github.io',
+  site: siteUrl,
   trailingSlash: 'always',
   prefetch: {
     prefetchAll: true,
@@ -58,7 +60,20 @@ export default defineConfig({
   },
   integrations: [
     sitemap({
-      filter: (page) => !page.includes('/404'),
+      filter: (page) => !page.includes('/404') && !page.includes('/articles'),
+      serialize(item) {
+        const url = item.url;
+        if (url === `${siteUrl}/` || url === siteUrl) {
+          return { ...item, changefreq: 'daily', priority: 1 };
+        }
+        if (url.includes('/posts/')) {
+          return { ...item, changefreq: 'weekly', priority: 0.8 };
+        }
+        if (url.includes('/about') || url.includes('/services') || url.includes('/order')) {
+          return { ...item, changefreq: 'monthly', priority: 0.9 };
+        }
+        return { ...item, changefreq: 'monthly', priority: 0.5 };
+      },
     }),
   ],
   markdown: {

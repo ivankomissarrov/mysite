@@ -9,6 +9,10 @@ import { site } from '../data/site';
 <BaseLayout
   title="Портфолио и опыт"
   description="Иван Комиссаров — игропрактик и геймдизайнер: образовательные игры, курсы, Граникон и Гильдия разработчиков настольных игр."
+  breadcrumbs={[
+    { name: 'Главная', href: '/' },
+    { name: 'Портфолио и опыт', href: '/about/' },
+  ]}
 >
   <section class="page-hero wrap">
     <Avatar class="hero-avatar hero-avatar-sm" size={180} alt={site.name} />
