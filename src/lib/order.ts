@@ -6,6 +6,12 @@ export interface ProductOption {
   price: number;
 }
 
+export interface ProductHome {
+  title: string;
+  blurb: string;
+  priceLabel: string;
+}
+
 export interface Product {
   id: string;
   name: string;
@@ -15,6 +21,7 @@ export interface Product {
   hoursMin?: number;
   hoursMax?: number;
   options?: ProductOption[];
+  home?: ProductHome;
 }
 
 export interface Discount {
@@ -30,7 +37,16 @@ export interface OrderCatalog {
   varianceNote: string;
   negotiableLabel: string;
   discounts: Discount[];
+  homePopularIds?: string[];
   products: Product[];
+}
+
+export interface HomePopularItem {
+  id: string;
+  title: string;
+  blurb: string;
+  priceLabel: string;
+  href: string;
 }
 
 export interface OrderLineInput {
@@ -61,6 +77,25 @@ function clamp(value: number, min: number, max: number): number {
 
 export function findProduct(catalog: OrderCatalog, id: string): Product | undefined {
   return catalog.products.find((product) => product.id === id);
+}
+
+export function getHomePopular(catalog: OrderCatalog): HomePopularItem[] {
+  const ids = catalog.homePopularIds ?? [];
+  const items: HomePopularItem[] = [];
+
+  for (const id of ids) {
+    const product = findProduct(catalog, id);
+    if (!product?.home?.title || !product.home.blurb || !product.home.priceLabel) continue;
+    items.push({
+      id: product.id,
+      title: product.home.title,
+      blurb: product.home.blurb,
+      priceLabel: product.home.priceLabel,
+      href: `/order/?product=${encodeURIComponent(product.id)}`,
+    });
+  }
+
+  return items;
 }
 
 export function lineHours(product: Product, hours?: number): number {
