@@ -307,13 +307,51 @@ function pngToIco(images) {
   return Buffer.concat([header, entries, ...payloads]);
 }
 
-async function writeSquarePng(src, dest, size) {
-  // Full-bleed square crop — circular transparent masks look like empty stubs in tabs.
-  await sharp(src, { failOn: 'none' })
+function circleSvg(size, fill = '#fff') {
+  return Buffer.from(
+    `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}"><circle cx="${size / 2}" cy="${size / 2}" r="${size / 2}" fill="${fill}"/></svg>`,
+  );
+}
+
+/** Match `.brand-avatar`: circular photo + purple→cyan gradient ring. */
+async function writeBrandAvatarPng(src, dest, size, { opaque = false } = {}) {
+  // Header uses ~1.5px ring on 38px (~4%); bump slightly so it stays visible at 16–32px.
+  const ring = Math.max(2, Math.round(size * 0.07));
+  const inner = size - ring * 2;
+
+  const photo = await sharp(src, { failOn: 'none' })
     .rotate()
-    .resize(size, size, { fit: 'cover', position: 'centre' })
-    .png({ compressionLevel: 9 })
-    .toFile(dest);
+    .resize(inner, inner, { fit: 'cover', position: 'centre' })
+    .composite([{ input: circleSvg(inner), blend: 'dest-in' }])
+    .png()
+    .toBuffer();
+
+  const frame = Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}">
+  <defs>
+    <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#d8b4fe"/>
+      <stop offset="50%" stop-color="#7c3aed"/>
+      <stop offset="100%" stop-color="#5ce1ff"/>
+    </linearGradient>
+  </defs>
+  <circle cx="${size / 2}" cy="${size / 2}" r="${size / 2}" fill="url(#g)"/>
+</svg>`);
+
+  let icon = await sharp(frame)
+    .composite([{ input: photo, left: ring, top: ring }])
+    .png()
+    .toBuffer();
+
+  if (opaque) {
+    icon = await sharp({
+      create: { width: size, height: size, channels: 4, background: { r: 5, g: 5, b: 8, alpha: 1 } },
+    })
+      .composite([{ input: icon }])
+      .png()
+      .toBuffer();
+  }
+
+  await writeFile(dest, icon);
 }
 
 async function ensureFavicon() {
@@ -332,17 +370,17 @@ async function ensureFavicon() {
 
   const png32 = path.join(dir, 'favicon-32.png');
   const png48 = path.join(dir, 'favicon.png');
-  await writeSquarePng(src, png32, 32);
-  await writeSquarePng(src, png48, 48);
-  await writeSquarePng(src, path.join(dir, 'apple-touch-icon.png'), 180);
+  await writeBrandAvatarPng(src, png32, 32);
+  await writeBrandAvatarPng(src, png48, 48);
+  await writeBrandAvatarPng(src, path.join(dir, 'apple-touch-icon.png'), 180, { opaque: true });
   // Stable path next to the avatar — preserved during SFTP clears.
-  await writeSquarePng(src, path.join(dir, 'images', 'favicon-32.png'), 32);
+  await writeBrandAvatarPng(src, path.join(dir, 'images', 'favicon-32.png'), 32);
   const ico = pngToIco([
     { size: 32, data: await readFile(png32) },
     { size: 48, data: await readFile(png48) },
   ]);
   await writeFile(path.join(dir, 'favicon.ico'), ico);
-  console.log('favicon: wrote avatar icons');
+  console.log('favicon: wrote framed avatar icons');
 }
 
 const start = Date.now();
