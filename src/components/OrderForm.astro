@@ -76,6 +76,7 @@ const orderCatalog = catalog as OrderCatalog;
     telegramOrderUrl,
     type OrderCatalog,
     type OrderLineInput,
+    type Product,
   } from '../lib/order';
 
   const catalog = catalogJson as OrderCatalog;
@@ -93,12 +94,18 @@ const orderCatalog = catalog as OrderCatalog;
   let nextKey = 1;
   let lines: LineState[] = [];
 
-  function defaultLine(): LineState {
-    const first = catalog.products[0];
+  function productFromQuery(): Product | undefined {
+    const id = new URLSearchParams(window.location.search).get('product');
+    return id ? findProduct(catalog, id) : undefined;
+  }
+
+  function defaultLine(preferredId?: string): LineState {
+    const product =
+      (preferredId ? findProduct(catalog, preferredId) : undefined) ?? catalog.products[0];
     return {
       key: nextKey++,
-      productId: first?.id ?? 'other',
-      hours: first?.hoursMin ?? 1,
+      productId: product?.id ?? 'other',
+      hours: product?.hoursMin ?? 1,
       optionIds: [],
     };
   }
@@ -230,7 +237,7 @@ const orderCatalog = catalog as OrderCatalog;
     const list = form.querySelector('[data-lines]');
     if (!(list instanceof HTMLElement)) return;
 
-    if (lines.length === 0) lines = [defaultLine()];
+    if (lines.length === 0) lines = [defaultLine(productFromQuery()?.id)];
     renderLines(list);
     updateQuote(form);
 
@@ -397,7 +404,7 @@ const orderCatalog = catalog as OrderCatalog;
         if (await postOrder()) {
           setStatus(form, 'Заявка отправлена. Я напишу вам в мессенджере.', 'ok');
           form.reset();
-          lines = [defaultLine()];
+          lines = [defaultLine(productFromQuery()?.id)];
           renderLines(list);
           updateQuote(form);
         } else {

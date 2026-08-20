@@ -75,8 +75,35 @@
       .status { min-height: 1.4em; color: var(--muted); margin: 0 0 1rem; }
       .drop { outline: 2px dashed transparent; }
       .drop.is-over { outline-color: var(--purple); }
+      .home-popular-list { display: grid; gap: 0.55rem; }
+      .home-popular-item {
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        gap: 0.55rem;
+        align-items: center;
+        padding: 0.55rem 0.7rem;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+      }
+      .home-popular-item label.check {
+        display: flex;
+        gap: 0.55rem;
+        align-items: center;
+        color: var(--text);
+        font-size: 0.95rem;
+      }
+      .home-popular-item .moves { display: flex; gap: 0.35rem; }
+      .home-block {
+        margin-top: 0.9rem;
+        padding-top: 0.8rem;
+        border-top: 1px solid var(--border);
+        display: grid;
+        gap: 0.7rem;
+      }
+      .home-block h4 { margin: 0; font-size: 0.95rem; color: var(--muted); font-weight: 600; }
       @media (max-width: 720px) {
         .row, .row-3, .option { grid-template-columns: 1fr; }
+        .home-popular-item { grid-template-columns: 1fr; }
       }
     </style>
   </head>
@@ -103,13 +130,26 @@
         variancePercent: 20,
         varianceNote: 'Цена ориентировочная и может варьироваться в пределах 20%',
         negotiableLabel: 'по договорённости',
+        homePopularIds: ['consult', 'boardgame', 'rework', 'larp'],
         discounts: [
           { from: 200000, percent: 15 },
           { from: 100000, percent: 10 },
           { from: 50000, percent: 5 },
         ],
         products: [
-          { id: 'consult', name: 'Онлайн консультация', kind: 'hours', hourlyRate: 5000, hoursMin: 1, hoursMax: 10 },
+          {
+            id: 'consult',
+            name: 'Онлайн консультация',
+            kind: 'hours',
+            hourlyRate: 5000,
+            hoursMin: 1,
+            hoursMax: 10,
+            home: {
+              title: 'Консультация',
+              blurb: 'Разберём идею, прототип или чужую игру и наметим следующий шаг.',
+              priceLabel: 'от 5 000 ₽/час',
+            },
+          },
           {
             id: 'boardgame',
             name: 'Настольная игра под ключ',
@@ -121,6 +161,11 @@
               { id: 'method', name: 'Методические материалы', price: 20000 },
               { id: 'print', name: 'Сопровождение печати', price: 15000 },
             ],
+            home: {
+              title: 'Игра под ключ',
+              blurb: 'Концепт, правила, баланс и прототип образовательной или корпоративной настолки.',
+              priceLabel: '120–220 тыс. ₽',
+            },
           },
           {
             id: 'rework',
@@ -133,6 +178,11 @@
               { id: 'copy', name: 'Редактура текстов', price: 15000 },
               { id: 'playtest', name: 'Тестирование с группой', price: 25000 },
             ],
+            home: {
+              title: 'Доработка игры',
+              blurb: 'Поправим баланс и правила, добавим механики или проведём тестирование.',
+              priceLabel: '40–135 тыс. ₽',
+            },
           },
           {
             id: 'course',
@@ -145,6 +195,7 @@
               { id: 'travel', name: 'Выезд в другой город', price: 40000 },
               { id: 'record', name: 'Запись занятий', price: 20000 },
             ],
+            home: { title: '', blurb: '', priceLabel: '' },
           },
           {
             id: 'larp',
@@ -157,6 +208,11 @@
               { id: 'hosts', name: 'Ведущие на площадке', price: 40000 },
               { id: 'media', name: 'Фото- и видеосъёмка', price: 25000 },
             ],
+            home: {
+              title: 'Проведу игру живого действия',
+              blurb: 'Сценарий, роли и проведение на площадке — под вашу задачу и аудиторию.',
+              priceLabel: '150–295 тыс. ₽',
+            },
           },
           {
             id: 'teambuilding',
@@ -169,8 +225,9 @@
               { id: 'kit', name: 'Игровой реквизит', price: 20000 },
               { id: 'wrap', name: 'Фасилитация итогов', price: 15000 },
             ],
+            home: { title: '', blurb: '', priceLabel: '' },
           },
-          { id: 'other', name: 'Что-то другое', kind: 'custom' },
+          { id: 'other', name: 'Что-то другое', kind: 'custom', home: { title: '', blurb: '', priceLabel: '' } },
         ],
       };
 
@@ -200,8 +257,48 @@
           .replace(/^-|-$/g, '')
           .slice(0, 32) || `id-${Date.now()}`;
 
+      function emptyHome() {
+        return { title: '', blurb: '', priceLabel: '' };
+      }
+
+      function normalizeHome(home) {
+        const raw = home && typeof home === 'object' ? home : {};
+        return {
+          title: String(raw.title ?? ''),
+          blurb: String(raw.blurb ?? ''),
+          priceLabel: String(raw.priceLabel ?? ''),
+        };
+      }
+
+      function hasHomeContent(home) {
+        return Boolean(home && (home.title || home.blurb || home.priceLabel));
+      }
+
       function normalize(raw) {
         const data = raw && typeof raw === 'object' ? raw : {};
+        const products = Array.isArray(data.products)
+          ? data.products.map((product) => ({
+              id: String(product.id || slug(product.name)),
+              name: String(product.name ?? ''),
+              kind: ['hours', 'options', 'custom'].includes(product.kind) ? product.kind : 'options',
+              hourlyRate: num(product.hourlyRate),
+              hoursMin: num(product.hoursMin) || 1,
+              hoursMax: num(product.hoursMax) || 10,
+              basePrice: num(product.basePrice),
+              options: Array.isArray(product.options)
+                ? product.options.map((option) => ({
+                    id: String(option.id || slug(option.name)),
+                    name: String(option.name ?? ''),
+                    price: num(option.price),
+                  }))
+                : [],
+              home: normalizeHome(product.home),
+            }))
+          : structuredClone(starter.products);
+        const knownIds = new Set(products.map((product) => product.id));
+        const homePopularIds = Array.isArray(data.homePopularIds)
+          ? data.homePopularIds.map((id) => String(id)).filter((id) => knownIds.has(id))
+          : structuredClone(starter.homePopularIds).filter((id) => knownIds.has(id));
         return {
           endpoint: String(data.endpoint ?? ''),
           telegramShare: String(data.telegramShare ?? 'https://t.me/IvanKomissarov'),
@@ -209,31 +306,25 @@
           variancePercent: num(data.variancePercent) || 20,
           varianceNote: String(data.varianceNote ?? starter.varianceNote),
           negotiableLabel: String(data.negotiableLabel ?? starter.negotiableLabel),
+          homePopularIds,
           discounts: Array.isArray(data.discounts)
             ? data.discounts.map((item) => ({ from: num(item.from), percent: num(item.percent) }))
             : structuredClone(starter.discounts),
-          products: Array.isArray(data.products)
-            ? data.products.map((product) => ({
-                id: String(product.id || slug(product.name)),
-                name: String(product.name ?? ''),
-                kind: ['hours', 'options', 'custom'].includes(product.kind) ? product.kind : 'options',
-                hourlyRate: num(product.hourlyRate),
-                hoursMin: num(product.hoursMin) || 1,
-                hoursMax: num(product.hoursMax) || 10,
-                basePrice: num(product.basePrice),
-                options: Array.isArray(product.options)
-                  ? product.options.map((option) => ({
-                      id: String(option.id || slug(option.name)),
-                      name: String(option.name ?? ''),
-                      price: num(option.price),
-                    }))
-                  : [],
-              }))
-            : structuredClone(starter.products),
+          products,
+        };
+      }
+
+      function exportProductHome(home) {
+        if (!hasHomeContent(home)) return undefined;
+        return {
+          title: String(home.title ?? ''),
+          blurb: String(home.blurb ?? ''),
+          priceLabel: String(home.priceLabel ?? ''),
         };
       }
 
       function exportCatalog(data) {
+        const knownIds = new Set(data.products.map((product) => product.id));
         return {
           endpoint: data.endpoint,
           telegramShare: data.telegramShare,
@@ -241,10 +332,12 @@
           variancePercent: data.variancePercent,
           varianceNote: data.varianceNote,
           negotiableLabel: data.negotiableLabel,
+          homePopularIds: (data.homePopularIds ?? []).filter((id) => knownIds.has(id)),
           discounts: data.discounts
             .map((item) => ({ from: num(item.from), percent: num(item.percent) }))
             .sort((a, b) => b.from - a.from),
           products: data.products.map((product) => {
+            const home = exportProductHome(product.home);
             if (product.kind === 'hours') {
               return {
                 id: product.id || slug(product.name),
@@ -253,10 +346,16 @@
                 hourlyRate: num(product.hourlyRate),
                 hoursMin: num(product.hoursMin) || 1,
                 hoursMax: num(product.hoursMax) || 10,
+                ...(home ? { home } : {}),
               };
             }
             if (product.kind === 'custom') {
-              return { id: product.id || slug(product.name), name: product.name, kind: 'custom' };
+              return {
+                id: product.id || slug(product.name),
+                name: product.name,
+                kind: 'custom',
+                ...(home ? { home } : {}),
+              };
             }
             return {
               id: product.id || slug(product.name),
@@ -268,9 +367,77 @@
                 name: option.name,
                 price: num(option.price),
               })),
+              ...(home ? { home } : {}),
             };
           }),
         };
+      }
+
+      function orderedHomeProducts() {
+        const byId = new Map(state.products.map((product) => [product.id, product]));
+        const selected = (state.homePopularIds ?? [])
+          .map((id) => byId.get(id))
+          .filter(Boolean);
+        const selectedIds = new Set(selected.map((product) => product.id));
+        const rest = state.products.filter((product) => !selectedIds.has(product.id));
+        return [...selected, ...rest];
+      }
+
+      function renderHomePopular() {
+        const ordered = orderedHomeProducts();
+        const selected = new Set(state.homePopularIds ?? []);
+        return `
+          <section class="card">
+            <h2>Популярные на главной</h2>
+            <p class="lede" style="margin-bottom:0.9rem">
+              Отметьте услуги для блока на главной и задайте порядок стрелками.
+              Подписи кнопок — в полях «Главная» у продукта.
+            </p>
+            <div class="home-popular-list">
+              ${ordered
+                .map((product) => {
+                  const checked = selected.has(product.id);
+                  const index = (state.homePopularIds ?? []).indexOf(product.id);
+                  const canUp = checked && index > 0;
+                  const canDown = checked && index >= 0 && index < (state.homePopularIds?.length ?? 0) - 1;
+                  return `
+                    <div class="home-popular-item">
+                      <label class="check">
+                        <input type="checkbox" data-home-popular="${esc(product.id)}" ${checked ? 'checked' : ''} />
+                        <span><code>${esc(product.id)}</code> — ${esc(product.name)}</span>
+                      </label>
+                      <span class="ghost">${checked ? `#${index + 1}` : ''}</span>
+                      <div class="moves">
+                        <button type="button" data-home-move="${esc(product.id)}" data-dir="-1" ${canUp ? '' : 'disabled'}>↑</button>
+                        <button type="button" data-home-move="${esc(product.id)}" data-dir="1" ${canDown ? '' : 'disabled'}>↓</button>
+                      </div>
+                    </div>
+                  `;
+                })
+                .join('')}
+            </div>
+          </section>
+        `;
+      }
+
+      function renderHomeFields(product) {
+        const home = product.home ?? emptyHome();
+        return `
+          <div class="home-block">
+            <h4>Главная (кнопка популярной услуги)</h4>
+            <div class="row">
+              <label>Короткое название
+                <input data-home-field="title" value="${esc(home.title)}" placeholder="Консультация" />
+              </label>
+              <label>Ценовой разброс
+                <input data-home-field="priceLabel" value="${esc(home.priceLabel)}" placeholder="от 5 000 ₽/час" />
+              </label>
+            </div>
+            <label>Короткое описание
+              <textarea data-home-field="blurb" rows="2">${esc(home.blurb)}</textarea>
+            </label>
+          </div>
+        `;
       }
 
       function render() {
@@ -325,6 +492,7 @@
                 .join('')}
             </div>
           </section>
+          ${renderHomePopular()}
           ${state.products
             .map(
               (product, index) => `
@@ -395,6 +563,7 @@
                       `
                       : ''
                   }
+                  ${renderHomeFields(product)}
                 </section>
               `,
             )
@@ -429,14 +598,38 @@
           if (item) item[target.dataset.field] = num(target.value);
           return;
         }
+        if (target.dataset.homePopular) {
+          const id = target.dataset.homePopular;
+          state.homePopularIds = state.homePopularIds ?? [];
+          if (target instanceof HTMLInputElement && target.checked) {
+            if (!state.homePopularIds.includes(id)) state.homePopularIds.push(id);
+          } else {
+            state.homePopularIds = state.homePopularIds.filter((item) => item !== id);
+          }
+          render();
+          return;
+        }
         const card = target.closest('[data-product]');
         if (!card) return;
         const product = state.products[Number(card.dataset.product)];
         if (!product) return;
         if (target.dataset.productField) {
           const field = target.dataset.productField;
+          const previousId = product.id;
           product[field] = target.type === 'number' ? num(target.value) : target.value;
+          if (field === 'id') {
+            state.homePopularIds = (state.homePopularIds ?? []).map((item) =>
+              item === previousId ? product.id : item,
+            );
+            render();
+            return;
+          }
           if (field === 'kind') render();
+          return;
+        }
+        if (target.dataset.homeField) {
+          product.home = product.home ?? emptyHome();
+          product.home[target.dataset.homeField] = target.value;
           return;
         }
         if (target.dataset.option) {
@@ -457,6 +650,21 @@
           state.discounts.splice(Number(target.dataset.removeDiscount), 1);
           render();
         }
+        if (target.dataset.homeMove) {
+          const id = target.dataset.homeMove;
+          const dir = Number(target.dataset.dir);
+          const list = state.homePopularIds ?? [];
+          const index = list.indexOf(id);
+          const next = index + dir;
+          if (index >= 0 && next >= 0 && next < list.length) {
+            const copy = [...list];
+            const [item] = copy.splice(index, 1);
+            copy.splice(next, 0, item);
+            state.homePopularIds = copy;
+            render();
+          }
+          return;
+        }
         if (target.dataset.addProduct !== undefined) {
           state.products.push({
             id: `product-${state.products.length + 1}`,
@@ -464,11 +672,15 @@
             kind: 'options',
             basePrice: 0,
             options: [],
+            home: emptyHome(),
           });
           render();
         }
         if (target.dataset.removeProduct !== undefined) {
-          state.products.splice(Number(target.dataset.removeProduct), 1);
+          const removed = state.products.splice(Number(target.dataset.removeProduct), 1)[0];
+          if (removed) {
+            state.homePopularIds = (state.homePopularIds ?? []).filter((id) => id !== removed.id);
+          }
           render();
         }
         const card = target.closest('[data-product]');

@@ -1,0 +1,26 @@
+---
+import catalogJson from '../data/order-catalog.json';
+import { getHomePopular, type OrderCatalog } from '../lib/order';
+
+const items = getHomePopular(catalogJson as OrderCatalog);
+---
+
+{
+  items.length > 0 && (
+    <nav class="home-popular wrap" aria-label="Популярные услуги">
+      <ul class="home-popular-grid">
+        {
+          items.map((item) => (
+            <li>
+              <a class="home-popular-link" href={item.href} data-face="smile">
+                <span class="home-popular-title">{item.title}</span>
+                <span class="home-popular-price">{item.priceLabel}</span>
+                <span class="home-popular-blurb">{item.blurb}</span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+  )
+}
