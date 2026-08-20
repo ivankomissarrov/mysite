@@ -282,21 +282,6 @@ async function ensureAvatar() {
   console.log('avatar: wrote avatar.webp');
 }
 
-function circleMask(size) {
-  return Buffer.from(
-    `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}"><circle cx="${size / 2}" cy="${size / 2}" r="${size / 2}" fill="#fff"/></svg>`,
-  );
-}
-
-async function writeRoundPng(src, dest, size) {
-  await sharp(src, { failOn: 'none' })
-    .rotate()
-    .resize(size, size, { fit: 'cover', position: 'centre' })
-    .composite([{ input: circleMask(size), blend: 'dest-in' }])
-    .png()
-    .toFile(dest);
-}
-
 function pngToIco(images) {
   const count = images.length;
   const header = Buffer.alloc(6);
@@ -322,6 +307,15 @@ function pngToIco(images) {
   return Buffer.concat([header, entries, ...payloads]);
 }
 
+async function writeSquarePng(src, dest, size) {
+  // Full-bleed square crop — circular transparent masks look like empty stubs in tabs.
+  await sharp(src, { failOn: 'none' })
+    .rotate()
+    .resize(size, size, { fit: 'cover', position: 'centre' })
+    .png({ compressionLevel: 9 })
+    .toFile(dest);
+}
+
 async function ensureFavicon() {
   const dir = path.join(root, 'public');
   const sources = [
@@ -338,9 +332,11 @@ async function ensureFavicon() {
 
   const png32 = path.join(dir, 'favicon-32.png');
   const png48 = path.join(dir, 'favicon.png');
-  await writeRoundPng(src, png32, 32);
-  await writeRoundPng(src, png48, 48);
-  await writeRoundPng(src, path.join(dir, 'apple-touch-icon.png'), 180);
+  await writeSquarePng(src, png32, 32);
+  await writeSquarePng(src, png48, 48);
+  await writeSquarePng(src, path.join(dir, 'apple-touch-icon.png'), 180);
+  // Stable path next to the avatar — preserved during SFTP clears.
+  await writeSquarePng(src, path.join(dir, 'images', 'favicon-32.png'), 32);
   const ico = pngToIco([
     { size: 32, data: await readFile(png32) },
     { size: 48, data: await readFile(png48) },
