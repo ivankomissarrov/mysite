@@ -1,5 +1,5 @@
 export const site = {
-  url: 'https://ivankomissarrov.github.io',
+  url: 'https://komissarov.online',
   name: 'Иван Комиссаров',
   shortName: 'ИК',
   title: 'Иван Комиссаров — игропрактик и геймдизайнер',

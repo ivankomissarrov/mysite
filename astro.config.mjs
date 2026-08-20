@@ -2,7 +2,7 @@
 import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 
-const siteUrl = 'https://ivankomissarrov.github.io';
+const siteUrl = 'https://komissarov.online';
 
 function rehypeLazyImages() {
   return (tree) => {
