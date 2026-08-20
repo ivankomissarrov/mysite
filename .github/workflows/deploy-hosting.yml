@@ -7,7 +7,9 @@ on:
 
 concurrency:
   group: deploy-hosting
-  cancel-in-progress: true
+  # Never cancel an in-flight SFTP sync: clear+upload takes ~10–15 min, and a
+  # cancelled job leaves the docroot half-empty (REG.RU “сайт размещен некорректно”).
+  cancel-in-progress: false
 
 permissions:
   contents: read
