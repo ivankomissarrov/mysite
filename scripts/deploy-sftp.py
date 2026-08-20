@@ -20,6 +20,30 @@ from stat import S_ISDIR
 
 import paramiko
 
+# Must exist after deploy — hero face cycle breaks without these.
+REQUIRED_REMOTE_FILES = [
+    "images/avatar.webp",
+    "images/smile.webp",
+    "images/old.webp",
+    "images/faces/mage/default.webp",
+    "images/faces/mage/smile.webp",
+    "images/faces/mage/old.webp",
+    "images/faces/paladin/default.webp",
+    "images/faces/orc/default.webp",
+    "images/faces/duck/default.webp",
+    "images/faces/marine/default.webp",
+    "images/faces/potter/default.webp",
+]
+
+# Keep these on the server while the rest of the tree is cleared, so a long
+# upload cannot blank the hero cycle (clear → minutes of 404s → re-upload).
+PRESERVE_EXACT = {
+    "images/avatar.webp",
+    "images/smile.webp",
+    "images/old.webp",
+}
+PRESERVE_PREFIXES = ("images/faces/",)
+
 
 def require(name: str) -> str:
     value = os.environ.get(name, "").strip()
@@ -39,14 +63,60 @@ def ensure_dir(sftp: paramiko.SFTPClient, path: str) -> None:
             sftp.mkdir(cur)
 
 
-def clear_dir(sftp: paramiko.SFTPClient, path: str) -> None:
+def rel_under(remote_root: str, remote_path: str) -> str:
+    prefix = remote_root.rstrip("/") + "/"
+    if remote_path == remote_root.rstrip("/"):
+        return ""
+    if not remote_path.startswith(prefix):
+        raise ValueError(f"Path {remote_path!r} is not under {remote_root!r}")
+    return remote_path[len(prefix) :]
+
+
+def is_preserved(rel: str) -> bool:
+    if not rel:
+        return False
+    if rel in PRESERVE_EXACT:
+        return True
+    return any(rel == prefix.rstrip("/") or rel.startswith(prefix) for prefix in PRESERVE_PREFIXES)
+
+
+def clear_dir(sftp: paramiko.SFTPClient, path: str, remote_root: str) -> None:
+    """Remove remote files except avatar / face packs (kept online during upload)."""
     for entry in sftp.listdir_attr(path):
         remote = f"{path}/{entry.filename}"
+        rel = rel_under(remote_root, remote)
+        if is_preserved(rel):
+            continue
         if S_ISDIR(entry.st_mode):
-            clear_dir(sftp, remote)
-            sftp.rmdir(remote)
+            clear_dir(sftp, remote, remote_root)
+            # Keep non-empty preserved dirs (e.g. images/faces/...); drop emptied ones.
+            if not sftp.listdir(remote):
+                sftp.rmdir(remote)
         else:
             sftp.remove(remote)
+
+
+def upload_file(sftp: paramiko.SFTPClient, local: pathlib.Path, remote: str) -> None:
+    ensure_dir(sftp, str(pathlib.PurePosixPath(remote).parent))
+    sftp.put(str(local), remote)
+
+
+def verify_required(sftp: paramiko.SFTPClient, remote_root: str) -> None:
+    missing = []
+    for rel in REQUIRED_REMOTE_FILES:
+        remote = f"{remote_root}/{rel}"
+        try:
+            attr = sftp.stat(remote)
+            if attr.st_size <= 0:
+                missing.append(f"{rel} (empty)")
+        except FileNotFoundError:
+            missing.append(rel)
+    if missing:
+        raise SystemExit(
+            "Deploy verification failed — missing avatar assets:\n  - "
+            + "\n  - ".join(missing)
+        )
+    print(f"Verified {len(REQUIRED_REMOTE_FILES)} required avatar files on server")
 
 
 def main() -> None:
@@ -61,8 +131,32 @@ def main() -> None:
         raise SystemExit("dist/ not found — run npm run build first")
 
     files = [p for p in local_root.rglob("*") if p.is_file()]
+
+    def priority(path: pathlib.Path) -> tuple[int, str]:
+        rel = path.relative_to(local_root).as_posix()
+        if rel.startswith("images/faces/"):
+            return (0, rel)
+        if rel in PRESERVE_EXACT:
+            return (1, rel)
+        return (2, rel)
+
+    files.sort(key=priority)
+
+    local_faces = (
+        list((local_root / "images" / "faces").rglob("*.webp"))
+        if (local_root / "images" / "faces").is_dir()
+        else []
+    )
+    if len(local_faces) < 18:
+        raise SystemExit(
+            f"dist/images/faces is incomplete ({len(local_faces)} webp files, expected 18). "
+            "Make sure public/images/faces is committed."
+        )
+
+    face_first = [p for p in files if priority(p)[0] < 2]
+
     print(f"Connecting to {user}@{host}:{port}")
-    print(f"Uploading {len(files)} files to {remote_root}/")
+    print(f"Uploading {len(files)} files to {remote_root}/ ({len(local_faces)} face images)")
 
     transport = paramiko.Transport((host, port))
     transport.connect(username=user, password=password)
@@ -71,18 +165,24 @@ def main() -> None:
 
     try:
         ensure_dir(sftp, remote_root)
-        print("Clearing remote directory…")
-        clear_dir(sftp, remote_root)
+
+        # Refresh faces in place before wiping the rest of the tree.
+        print(f"Pre-uploading {len(face_first)} avatar assets…")
+        for path in face_first:
+            rel = path.relative_to(local_root).as_posix()
+            upload_file(sftp, path, f"{remote_root}/{rel}")
+
+        print("Clearing remote directory (preserving avatar / face packs)…")
+        clear_dir(sftp, remote_root, remote_root)
 
         started = time.time()
         for index, path in enumerate(files, start=1):
             rel = path.relative_to(local_root).as_posix()
-            remote_path = f"{remote_root}/{rel}"
-            ensure_dir(sftp, str(pathlib.PurePosixPath(remote_path).parent))
-            sftp.put(str(path), remote_path)
+            upload_file(sftp, path, f"{remote_root}/{rel}")
             if index % 50 == 0 or index == len(files):
                 print(f"  {index}/{len(files)}")
         print(f"Done in {time.time() - started:.1f}s")
+        verify_required(sftp, remote_root)
     finally:
         sftp.close()
         transport.close()
