@@ -282,10 +282,78 @@ async function ensureAvatar() {
   console.log('avatar: wrote avatar.webp');
 }
 
+function circleMask(size) {
+  return Buffer.from(
+    `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}"><circle cx="${size / 2}" cy="${size / 2}" r="${size / 2}" fill="#fff"/></svg>`,
+  );
+}
+
+async function writeRoundPng(src, dest, size) {
+  await sharp(src, { failOn: 'none' })
+    .rotate()
+    .resize(size, size, { fit: 'cover', position: 'centre' })
+    .composite([{ input: circleMask(size), blend: 'dest-in' }])
+    .png()
+    .toFile(dest);
+}
+
+function pngToIco(images) {
+  const count = images.length;
+  const header = Buffer.alloc(6);
+  header.writeUInt16LE(0, 0);
+  header.writeUInt16LE(1, 2);
+  header.writeUInt16LE(count, 4);
+  const entries = Buffer.alloc(16 * count);
+  const payloads = [];
+  let offset = 6 + 16 * count;
+  images.forEach(({ size, data }, index) => {
+    const entry = entries.subarray(index * 16, index * 16 + 16);
+    entry[0] = size >= 256 ? 0 : size;
+    entry[1] = size >= 256 ? 0 : size;
+    entry[2] = 0;
+    entry[3] = 0;
+    entry.writeUInt16LE(1, 4);
+    entry.writeUInt16LE(32, 6);
+    entry.writeUInt32LE(data.length, 8);
+    entry.writeUInt32LE(offset, 12);
+    payloads.push(data);
+    offset += data.length;
+  });
+  return Buffer.concat([header, entries, ...payloads]);
+}
+
+async function ensureFavicon() {
+  const dir = path.join(root, 'public');
+  const sources = [
+    path.join(dir, 'images', 'avatar.jpg'),
+    path.join(dir, 'images', 'avatar.jpeg'),
+    path.join(dir, 'images', 'avatar.png'),
+    path.join(dir, 'images', 'avatar.webp'),
+  ];
+  const src = (await Promise.all(sources.map(async (file) => ((await exists(file)) ? file : null)))).find(Boolean);
+  if (!src) {
+    console.log('favicon: missing avatar source');
+    return;
+  }
+
+  const png32 = path.join(dir, 'favicon-32.png');
+  const png48 = path.join(dir, 'favicon.png');
+  await writeRoundPng(src, png32, 32);
+  await writeRoundPng(src, png48, 48);
+  await writeRoundPng(src, path.join(dir, 'apple-touch-icon.png'), 180);
+  const ico = pngToIco([
+    { size: 32, data: await readFile(png32) },
+    { size: 48, data: await readFile(png48) },
+  ]);
+  await writeFile(path.join(dir, 'favicon.ico'), ico);
+  console.log('favicon: wrote avatar icons');
+}
+
 const start = Date.now();
 await ensureFonts();
 await localizeArticleImages();
 if (optimize) await optimizeExistingImages();
 await ensureThumbs();
 await ensureAvatar();
+await ensureFavicon();
 console.log(`local-assets ${Date.now() - start}ms`);
