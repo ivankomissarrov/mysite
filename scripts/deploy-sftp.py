@@ -20,8 +20,9 @@ from stat import S_ISDIR
 
 import paramiko
 
-# Must exist after deploy — hero face cycle breaks without these.
+# Must exist after deploy — hero face cycle / homepage break without these.
 REQUIRED_REMOTE_FILES = [
+    "index.html",
     "images/avatar.webp",
     "images/smile.webp",
     "images/old.webp",
@@ -36,8 +37,10 @@ REQUIRED_REMOTE_FILES = [
 ]
 
 # Keep these on the server while the rest of the tree is cleared, so a long
-# upload cannot blank the hero cycle (clear → minutes of 404s → re-upload).
+# upload (or a cancelled job) cannot blank the homepage or hero cycle.
 PRESERVE_EXACT = {
+    "index.html",
+    "404.html",
     "images/avatar.webp",
     "images/smile.webp",
     "images/old.webp",
@@ -81,7 +84,7 @@ def is_preserved(rel: str) -> bool:
 
 
 def clear_dir(sftp: paramiko.SFTPClient, path: str, remote_root: str) -> None:
-    """Remove remote files except avatar / face packs (kept online during upload)."""
+    """Remove remote files except homepage + avatar packs (kept online during upload)."""
     for entry in sftp.listdir_attr(path):
         remote = f"{path}/{entry.filename}"
         rel = rel_under(remote_root, remote)
@@ -113,10 +116,10 @@ def verify_required(sftp: paramiko.SFTPClient, remote_root: str) -> None:
             missing.append(rel)
     if missing:
         raise SystemExit(
-            "Deploy verification failed — missing avatar assets:\n  - "
+            "Deploy verification failed — missing required files:\n  - "
             + "\n  - ".join(missing)
         )
-    print(f"Verified {len(REQUIRED_REMOTE_FILES)} required avatar files on server")
+    print(f"Verified {len(REQUIRED_REMOTE_FILES)} required files on server")
 
 
 def main() -> None:
@@ -136,9 +139,11 @@ def main() -> None:
         rel = path.relative_to(local_root).as_posix()
         if rel.startswith("images/faces/"):
             return (0, rel)
-        if rel in PRESERVE_EXACT:
+        if rel in {"images/avatar.webp", "images/smile.webp", "images/old.webp"}:
             return (1, rel)
-        return (2, rel)
+        if rel in {"index.html", "404.html"}:
+            return (2, rel)
+        return (3, rel)
 
     files.sort(key=priority)
 
@@ -153,7 +158,7 @@ def main() -> None:
             "Make sure public/images/faces is committed."
         )
 
-    face_first = [p for p in files if priority(p)[0] < 2]
+    critical_first = [p for p in files if priority(p)[0] < 3]
 
     print(f"Connecting to {user}@{host}:{port}")
     print(f"Uploading {len(files)} files to {remote_root}/ ({len(local_faces)} face images)")
@@ -166,13 +171,13 @@ def main() -> None:
     try:
         ensure_dir(sftp, remote_root)
 
-        # Refresh faces in place before wiping the rest of the tree.
-        print(f"Pre-uploading {len(face_first)} avatar assets…")
-        for path in face_first:
+        # Refresh homepage + faces in place before wiping the rest of the tree.
+        print(f"Pre-uploading {len(critical_first)} critical assets…")
+        for path in critical_first:
             rel = path.relative_to(local_root).as_posix()
             upload_file(sftp, path, f"{remote_root}/{rel}")
 
-        print("Clearing remote directory (preserving avatar / face packs)…")
+        print("Clearing remote directory (preserving homepage + avatar packs)…")
         clear_dir(sftp, remote_root, remote_root)
 
         started = time.time()
