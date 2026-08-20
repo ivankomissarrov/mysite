@@ -59,4 +59,10 @@ tags: ['тема']
 
 В `src/data/site.ts` и `astro.config.mjs` замените адрес сайта на свой домен. Имя, описание и ссылки правятся в `src/data/site.ts`.
 
+Автодеплой на `komissarov.online`: при пуше в `main` (или вручную в Actions → **Deploy to komissarov.online**) GitHub собирает сайт и заливает `dist/` по SFTP. Один раз добавьте secrets в репозитории (**Settings → Secrets and variables → Actions**):
+
+- `SFTP_HOST` — `server205.hosting.reg.ru`
+- `SFTP_USER` — логин хостинга (например `u3617283`)
+- `SFTP_PASSWORD` — пароль из карточки хостинга → вкладка **Доступы** (пароль панели ispmanager / SFTP)
+
 Для Яндекса: зарегистрируйте сайт в [Вебмастере](https://webmaster.yandex.ru/), добавьте код подтверждения в `site.seo.yandexVerification`. Поиск по «Иван Комиссаров» усиливается разметкой Schema.org Person, `llms.txt` и мета-тегами — это не мгновенный топ, но даёт роботам и нейросетям явную карточку человека.
