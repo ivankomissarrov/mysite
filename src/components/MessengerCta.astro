@@ -1,0 +1,228 @@
+---
+import { site } from '../data/site';
+import catalog from '../data/order-catalog.json';
+
+interface Props {
+  variant?: 'primary' | 'ghost';
+}
+
+const { variant = 'primary' } = Astro.props;
+const menuId = 'messenger-menu';
+---
+
+<div class="messenger-cta" data-messenger-cta data-order-endpoint={catalog.endpoint}>
+  <button
+    type="button"
+    class:list={['btn', variant === 'ghost' ? 'btn-ghost' : 'btn-primary']}
+    data-messenger-toggle
+    data-face="smile"
+    aria-expanded="false"
+    aria-controls={menuId}
+    aria-haspopup="menu"
+  >
+    {site.cta.write.label}
+  </button>
+  <ul class="messenger-menu" id={menuId} role="menu" hidden>
+    {
+      site.messengers.map((item) => (
+        <li
+          class:list={['messenger-item', { 'messenger-item--mobile': 'mobileOnly' in item && item.mobileOnly }]}
+          role="none"
+        >
+          {item.id === 'max' ? (
+            <div
+              class="messenger-option messenger-option--max"
+              role="menuitem"
+              data-max-ping
+              data-max-href={'appHref' in item ? item.appHref : item.href}
+            >
+              <span class="messenger-option-mark" aria-hidden="true">
+                <svg viewBox="0 0 100 100" width="22" height="22">
+                  <defs>
+                    <linearGradient id="max-logo-grad" x1="8" y1="92" x2="92" y2="10">
+                      <stop offset="0%" stop-color="#00BFFF" />
+                      <stop offset="42%" stop-color="#471AFF" />
+                      <stop offset="100%" stop-color="#9500FF" />
+                    </linearGradient>
+                  </defs>
+                  <path
+                    fill="url(#max-logo-grad)"
+                    fill-rule="evenodd"
+                    d="M50.757 0.262C78.293 0.262 99.886 22.597 99.886 50.147C99.886 77.697 77.607 99.49 51.021 99.49C41.586 99.49 37.014 98.162 29.65 92.947C29.143 92.59 28.45 92.683 28.021 93.14C22.357 99.183 7.85 103.426 7.186 95.176C7.186 80.79 0 71.447 0 49.876C0 21.555 23.221 0.262 50.757 0.262ZM51.529 24.812C38.464 24.126 28.264 33.197 26.014 47.383C24.15 59.133 27.45 73.455 30.279 74.176C31.479 74.483 34.357 72.276 36.457 70.297C36.85 69.926 37.45 69.862 37.907 70.147C41.179 72.147 44.879 73.647 48.957 73.862C62.371 74.562 74.257 64.062 74.964 50.647C75.664 37.233 64.943 25.505 51.529 24.805V24.812Z"
+                  />
+                </svg>
+              </span>
+              <span class="messenger-option-text">
+                <a
+                  class="messenger-option-name"
+                  href={'appHref' in item ? item.appHref : item.href}
+                  data-face="smile"
+                >
+                  {item.name}
+                </a>
+                <span class="messenger-option-note">{item.note}</span>
+              </span>
+            </div>
+          ) : (
+            <a
+              class={`messenger-option messenger-option--${item.id}`}
+              href={item.href}
+              role="menuitem"
+              target="_blank"
+              rel="noopener noreferrer"
+              data-face="smile"
+            >
+              <span class="messenger-option-mark" aria-hidden="true">
+                {item.id === 'vk' && (
+                  <svg viewBox="7 13 35 24" width="22" height="16">
+                    <path
+                      fill="#0077FF"
+                      d="M25.54 34.5801C14.6 34.5801 8.3601 27.0801 8.1001 14.6001H13.5801C13.7601 23.7601 17.8 27.6401 21 28.4401V14.6001H26.1602V22.5001C29.3202 22.1601 32.6398 18.5601 33.7598 14.6001H38.9199C38.0599 19.4801 34.4599 23.0801 31.8999 24.5601C34.4599 25.7601 38.5601 28.9001 40.1201 34.5801H34.4399C33.2199 30.7801 30.1802 27.8401 26.1602 27.4401V34.5801H25.54Z"
+                    />
+                  </svg>
+                )}
+                {item.id === 'telegram' && (
+                  <svg viewBox="0 0 24 24" width="20" height="20">
+                    <path
+                      fill="currentColor"
+                      d="M20.7 4.6 3.4 11.2c-1.2.5-1.2 1.2-.2 1.5l4.4 1.4 10.2-6.4c.5-.3.9-.1.6.2l-8.2 7.4-.3 4.5c.5 0 .7-.2 1-.5l2.3-2.2 4.8 3.5c.9.5 1.5.2 1.7-.8l3.1-14.6c.3-1.3-.5-1.9-1.4-1.6Z"
+                    />
+                  </svg>
+                )}
+              </span>
+              <span class="messenger-option-text">
+                <span class="messenger-option-name">{item.name}</span>
+                <span class="messenger-option-note">{item.note}</span>
+              </span>
+            </a>
+          )}
+        </li>
+      ))
+    }
+  </ul>
+</div>
+
+<script>
+  import catalog from '../data/order-catalog.json';
+
+  function closeAll(except) {
+    document.querySelectorAll('[data-messenger-cta]').forEach((root) => {
+      if (root === except) return;
+      root.classList.remove('is-open');
+      const toggle = root.querySelector('[data-messenger-toggle]');
+      const menu = root.querySelector('.messenger-menu');
+      if (toggle instanceof HTMLElement) toggle.setAttribute('aria-expanded', 'false');
+      if (menu instanceof HTMLElement) menu.hidden = true;
+    });
+  }
+
+  function isMobileDevice() {
+    const uaData = navigator.userAgentData;
+    if (uaData?.mobile) return true;
+    return /Mobi|Android|iPhone|iPod|iPad/i.test(navigator.userAgent);
+  }
+
+  function prepareMaxLinks() {
+    const mobile = isMobileDevice();
+    document.documentElement.classList.toggle('is-mobile', mobile);
+    document.querySelectorAll('.messenger-item--mobile').forEach((item) => {
+      if (item instanceof HTMLElement) item.hidden = !mobile;
+    });
+  }
+
+  function pingEndpoint() {
+    const fromDom = document.querySelector('[data-order-endpoint]')?.getAttribute('data-order-endpoint');
+    return (fromDom || catalog.endpoint || '').trim();
+  }
+
+  function notifyMaxClick() {
+    const endpoint = pingEndpoint();
+    if (!endpoint) return;
+
+    const now = Date.now();
+    const key = 'max-ping-at';
+    const last = Number(sessionStorage.getItem(key) || 0);
+    if (now - last < 8000) return;
+    sessionStorage.setItem(key, String(now));
+
+    const googleScript = /script\.google\.com/i.test(endpoint);
+    const payload = {
+      type: 'max',
+      phone: '79990000000',
+      messenger: 'MAX',
+      comment: 'Вам скоро напишут в MAX',
+      lines: [{ name: 'MAX', detail: 'открыли профиль с сайта' }],
+      negotiable: true,
+      negotiableLabel: 'Вам скоро напишут в MAX',
+    };
+    const body = JSON.stringify(payload);
+
+    try {
+      const getUrl = `${endpoint}${endpoint.includes('?') ? '&' : '?'}type=max&t=${now}`;
+      new Image().src = getUrl;
+    } catch {}
+
+    try {
+      navigator.sendBeacon?.(endpoint, new Blob([body], { type: 'text/plain;charset=utf-8' }));
+    } catch {}
+
+    fetch(endpoint, {
+      method: 'POST',
+      mode: googleScript ? 'no-cors' : 'cors',
+      headers: {
+        'Content-Type': googleScript ? 'text/plain;charset=utf-8' : 'application/json',
+      },
+      body,
+      keepalive: true,
+    }).catch(() => {});
+  }
+
+  function openMaxApp(href) {
+    if (!href) return;
+    window.setTimeout(() => {
+      window.location.assign(href);
+    }, 500);
+  }
+
+  if (!document.documentElement.hasAttribute('data-messenger-bound')) {
+  document.documentElement.setAttribute('data-messenger-bound', '');
+  prepareMaxLinks();
+  document.addEventListener('astro:page-load', prepareMaxLinks);
+
+  document.addEventListener('click', (event) => {
+    const target = event.target instanceof Element ? event.target : null;
+    const toggle = target?.closest('[data-messenger-toggle]');
+    const root = target?.closest('[data-messenger-cta]');
+
+    const maxHit = target?.closest('[data-max-ping]');
+    if (maxHit instanceof HTMLElement) {
+      event.preventDefault();
+      notifyMaxClick();
+      openMaxApp(maxHit.getAttribute('data-max-href') || maxHit.querySelector('a')?.href || '');
+      closeAll(null);
+      return;
+    }
+
+    if (target?.closest('.messenger-option')) {
+      closeAll(null);
+      return;
+    }
+
+    if (toggle instanceof HTMLElement && root instanceof HTMLElement) {
+      const willOpen = !root.classList.contains('is-open');
+      closeAll(willOpen ? root : null);
+      root.classList.toggle('is-open', willOpen);
+      toggle.setAttribute('aria-expanded', String(willOpen));
+      const menu = root.querySelector('.messenger-menu');
+      if (menu instanceof HTMLElement) menu.hidden = !willOpen;
+      return;
+    }
+
+    if (!root) closeAll(null);
+  });
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') closeAll(null);
+  });
+  }
+</script>

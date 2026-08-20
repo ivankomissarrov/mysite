@@ -1,0 +1,419 @@
+---
+import catalog from '../data/order-catalog.json';
+import type { OrderCatalog } from '../lib/order';
+import { site } from '../data/site';
+
+const orderCatalog = catalog as OrderCatalog;
+---
+
+<form class="order-form" data-order-form novalidate>
+  <label class="order-field">
+    <span>Имя</span>
+    <input name="name" type="text" required autocomplete="name" placeholder="Как к вам обращаться" />
+  </label>
+
+  <div class="order-check order-consent">
+    <input id="order-consent" name="consent" type="checkbox" required />
+    <p class="order-consent-text">
+      <label for="order-consent">Согласен с </label>
+      <a href={site.cta.privacy.href}>политикой обработки персональных данных</a>
+      <label for="order-consent"> и </label>
+      <a href={site.cta.confidentiality.href}>политикой конфиденциальности</a>
+    </p>
+  </div>
+
+  <div class="order-lines" data-lines></div>
+  <button class="btn btn-ghost order-add" type="button" data-add-line>Добавить позицию</button>
+
+  <label class="order-field">
+    <span>Комментарий</span>
+    <textarea
+      name="comment"
+      rows="6"
+      placeholder="Описание проекта: задача, сроки, аудитория, что важно"
+    ></textarea>
+  </label>
+
+  <div class="order-contacts">
+    <label class="order-field">
+      <span>Телефон</span>
+      <input name="phone" type="tel" required autocomplete="tel" placeholder="8 (925) 000 00 00" />
+    </label>
+    <label class="order-field">
+      <span>Мессенджер</span>
+      <input name="messenger" type="text" autocomplete="nickname" placeholder="ВК, Telegram или MAX" />
+    </label>
+  </div>
+
+  <label class="order-honeypot" aria-hidden="true">
+    Сайт
+    <input name="website" tabindex="-1" autocomplete="off" />
+  </label>
+
+  <aside class="order-quote card" data-quote>
+    <p class="order-quote-sub" data-subtotal></p>
+    <p class="order-quote-discount" data-discount hidden></p>
+    <p class="order-quote-total" data-total></p>
+    <details class="order-spoiler">
+      <summary>О цене</summary>
+      <p>{orderCatalog.varianceNote}</p>
+    </details>
+  </aside>
+
+  <button class="btn btn-primary order-submit" type="submit" data-submit>Отправить заявку</button>
+  <p class="order-status" data-status role="status"></p>
+</form>
+
+<script>
+  import catalogJson from '../data/order-catalog.json';
+  import {
+    buildOrderMessage,
+    findProduct,
+    formatRub,
+    formatRubFrom,
+    isValidPhone,
+    quoteOrder,
+    telegramOrderUrl,
+    type OrderCatalog,
+    type OrderLineInput,
+  } from '../lib/order';
+
+  const catalog = catalogJson as OrderCatalog;
+
+  const escapeHtml = (value: string) =>
+    value.replace(/[&<>"']/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char] ?? char);
+
+  type LineState = {
+    key: number;
+    productId: string;
+    hours: number;
+    optionIds: string[];
+  };
+
+  let nextKey = 1;
+  let lines: LineState[] = [];
+
+  function defaultLine(): LineState {
+    const first = catalog.products[0];
+    return {
+      key: nextKey++,
+      productId: first?.id ?? 'other',
+      hours: first?.hoursMin ?? 1,
+      optionIds: [],
+    };
+  }
+
+  function inputs(): OrderLineInput[] {
+    return lines.map((line) => ({
+      productId: line.productId,
+      hours: line.hours,
+      optionIds: line.optionIds,
+    }));
+  }
+
+  function renderLines(root: HTMLElement) {
+    root.innerHTML = lines
+      .map((line) => {
+        const product = findProduct(catalog, line.productId);
+        const options =
+          product?.kind === 'options'
+            ? (product.options ?? [])
+                .map(
+                  (option) => `
+                    <label class="order-check">
+                      <input type="checkbox" data-option="${escapeHtml(option.id)}" ${line.optionIds.includes(option.id) ? 'checked' : ''} />
+                      <span>${escapeHtml(option.name)}</span>
+                      <em>+ ${formatRub(option.price)}</em>
+                    </label>
+                  `,
+                )
+                .join('')
+            : '';
+        const hours =
+          product?.kind === 'hours'
+            ? `
+              <label class="order-hours">
+                <span>Часы: <strong data-hours-label>${line.hours}</strong></span>
+                <input
+                  type="range"
+                  min="${product.hoursMin ?? 1}"
+                  max="${product.hoursMax ?? 10}"
+                  value="${line.hours}"
+                  data-hours
+                />
+              </label>
+            `
+            : '';
+        const custom =
+          product?.kind === 'custom'
+            ? `<p class="order-custom-hint">Опишите задачу в комментарии ниже — цену согласуем отдельно.</p>`
+            : '';
+        const canRemove = lines.length > 1 ? '' : 'hidden';
+
+        return `
+          <article class="card order-line" data-line="${line.key}">
+            <div class="order-line-head">
+              <label class="order-field">
+                <span>Тип продукта</span>
+                <select data-product>
+                  ${catalog.products
+                    .map(
+                      (item) =>
+                        `<option value="${escapeHtml(item.id)}" ${item.id === line.productId ? 'selected' : ''}>${escapeHtml(item.name)}</option>`,
+                    )
+                    .join('')}
+                </select>
+              </label>
+              <button class="order-remove" type="button" data-remove ${canRemove}>Удалить</button>
+            </div>
+            ${hours}
+            ${options ? `<div class="order-options">${options}</div>` : ''}
+            ${custom}
+            <p class="order-line-sum" data-line-sum></p>
+          </article>
+        `;
+      })
+      .join('');
+  }
+
+  function updateQuote(form: HTMLFormElement) {
+    const quote = quoteOrder(catalog, inputs());
+    form.querySelectorAll<HTMLElement>('[data-line]').forEach((card) => {
+      const key = Number(card.dataset.line);
+      const line = lines.find((item) => item.key === key);
+      const quoted = quote.lines[lines.findIndex((item) => item.key === key)];
+      const sum = card.querySelector('[data-line-sum]');
+      if (!sum || !line || !quoted) return;
+      sum.textContent = quoted.total > 0 ? formatRubFrom(quoted.total) : catalog.negotiableLabel;
+    });
+
+    const subtotal = form.querySelector('[data-subtotal]');
+    const discount = form.querySelector('[data-discount]');
+    const total = form.querySelector('[data-total]');
+    if (subtotal) {
+      subtotal.textContent = quote.subtotal > 0 ? `Сумма: ${formatRub(quote.subtotal)}` : '';
+    }
+    if (discount instanceof HTMLElement) {
+      if (quote.discount) {
+        discount.hidden = false;
+        discount.textContent = `Скидка ${quote.discount.percent}%: −${formatRub(quote.discountAmount)}`;
+      } else {
+        discount.hidden = true;
+        discount.textContent = '';
+      }
+    }
+    if (total) {
+      total.textContent = quote.negotiable ? catalog.negotiableLabel : formatRubFrom(quote.total);
+    }
+    return quote;
+  }
+
+  function setStatus(form: HTMLFormElement, text: string, kind: '' | 'ok' | 'err' = '') {
+    const status = form.querySelector('[data-status]');
+    if (!(status instanceof HTMLElement)) return;
+    status.textContent = text;
+    status.dataset.kind = kind;
+  }
+
+  async function copyText(text: string) {
+    try {
+      await navigator.clipboard.writeText(text);
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  function bindForm(form: HTMLFormElement) {
+    if (form.dataset.ready === '1') return;
+    form.dataset.ready = '1';
+    const list = form.querySelector('[data-lines]');
+    if (!(list instanceof HTMLElement)) return;
+
+    if (lines.length === 0) lines = [defaultLine()];
+    renderLines(list);
+    updateQuote(form);
+
+    list.addEventListener('change', (event) => {
+      const target = event.target;
+      if (!(target instanceof HTMLElement)) return;
+      const card = target.closest('[data-line]');
+      if (!(card instanceof HTMLElement)) return;
+      const line = lines.find((item) => item.key === Number(card.dataset.line));
+      if (!line) return;
+
+      if (target instanceof HTMLSelectElement && target.matches('[data-product]')) {
+        const product = findProduct(catalog, target.value);
+        line.productId = target.value;
+        line.optionIds = [];
+        line.hours = product?.hoursMin ?? 1;
+        renderLines(list);
+        updateQuote(form);
+        return;
+      }
+
+      if (target instanceof HTMLInputElement && target.matches('[data-hours]')) {
+        line.hours = Number(target.value);
+        const label = card.querySelector('[data-hours-label]');
+        if (label) label.textContent = String(line.hours);
+        updateQuote(form);
+        return;
+      }
+
+      if (target instanceof HTMLInputElement && target.matches('[data-option]')) {
+        const id = target.dataset.option ?? '';
+        line.optionIds = target.checked
+          ? [...new Set([...line.optionIds, id])]
+          : line.optionIds.filter((item) => item !== id);
+        updateQuote(form);
+      }
+    });
+
+    list.addEventListener('input', (event) => {
+      const target = event.target;
+      if (!(target instanceof HTMLInputElement) || !target.matches('[data-hours]')) return;
+      const card = target.closest('[data-line]');
+      const line = lines.find((item) => item.key === Number((card as HTMLElement | null)?.dataset.line));
+      if (!line) return;
+      line.hours = Number(target.value);
+      const label = card?.querySelector('[data-hours-label]');
+      if (label) label.textContent = String(line.hours);
+      updateQuote(form);
+    });
+
+    list.addEventListener('click', (event) => {
+      const target = event.target;
+      if (!(target instanceof HTMLElement)) return;
+      if (!target.matches('[data-remove]')) return;
+      const card = target.closest('[data-line]');
+      if (!(card instanceof HTMLElement) || lines.length <= 1) return;
+      lines = lines.filter((item) => item.key !== Number(card.dataset.line));
+      renderLines(list);
+      updateQuote(form);
+    });
+
+    form.querySelector('[data-add-line]')?.addEventListener('click', () => {
+      lines.push(defaultLine());
+      renderLines(list);
+      updateQuote(form);
+    });
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const data = new FormData(form);
+      if (String(data.get('website') ?? '').trim()) {
+        setStatus(form, 'Заявка отправлена.', 'ok');
+        return;
+      }
+
+      const name = String(data.get('name') ?? '').trim();
+      const phone = String(data.get('phone') ?? '').trim();
+      const messenger = String(data.get('messenger') ?? '').trim();
+      const comment = String(data.get('comment') ?? '').trim();
+      const consent = data.get('consent') === 'on';
+      if (!name) {
+        setStatus(form, 'Укажите имя.', 'err');
+        form.querySelector<HTMLInputElement>('[name="name"]')?.focus();
+        return;
+      }
+      if (!consent) {
+        setStatus(form, 'Нужно согласие на обработку персональных данных.', 'err');
+        form.querySelector<HTMLInputElement>('[name="consent"]')?.focus();
+        return;
+      }
+      if (!isValidPhone(phone)) {
+        setStatus(form, 'Укажите телефон — не меньше 10 цифр.', 'err');
+        form.querySelector<HTMLInputElement>('[name="phone"]')?.focus();
+        return;
+      }
+
+      const quote = updateQuote(form);
+      const message = buildOrderMessage(catalog, quote, { name, phone, messenger, comment });
+      const payload = {
+        name,
+        phone,
+        messenger,
+        comment,
+        consent: true,
+        website: String(data.get('website') ?? ''),
+        lines: quote.lines.map((line) => ({
+          name: line.product.name,
+          detail: line.product.kind === 'hours' ? `${line.hours} ч` : '',
+          options: line.options.map((option) => option.name),
+          total: line.total,
+        })),
+        subtotal: quote.subtotal,
+        discountPercent: quote.discount?.percent ?? 0,
+        discountAmount: quote.discountAmount,
+        total: quote.total,
+        negotiable: quote.negotiable,
+        variancePercent: catalog.variancePercent,
+        negotiableLabel: catalog.negotiableLabel,
+      };
+
+      const submit = form.querySelector<HTMLButtonElement>('[data-submit]');
+      if (submit) submit.disabled = true;
+      setStatus(form, 'Отправляем заявку…');
+
+      const openTelegram = async (reason: string) => {
+        const copied = await copyText(message);
+        if (catalog.telegramShare) {
+          window.open(telegramOrderUrl(catalog.telegramShare, message), '_blank', 'noopener,noreferrer');
+        }
+        const prefix = reason ? `${reason} ` : '';
+        setStatus(
+          form,
+          copied
+            ? `${prefix}Текст скопирован, откройте Telegram и нажмите отправить.`
+            : `${prefix}Откройте Telegram и вставьте текст заявки.`,
+          'ok',
+        );
+      };
+
+      const postOrder = async () => {
+        if (!catalog.endpoint) return false;
+        const googleScript = /script\.google\.com/i.test(catalog.endpoint);
+        const controller = new AbortController();
+        const timer = window.setTimeout(() => controller.abort(), googleScript ? 8000 : 2500);
+        try {
+          const response = await fetch(catalog.endpoint, {
+            method: 'POST',
+            mode: googleScript ? 'no-cors' : 'cors',
+            headers: {
+              'Content-Type': googleScript ? 'text/plain;charset=utf-8' : 'application/json',
+            },
+            body: JSON.stringify(payload),
+            signal: controller.signal,
+          });
+          return googleScript ? true : response.ok;
+        } catch {
+          return false;
+        } finally {
+          window.clearTimeout(timer);
+        }
+      };
+
+      try {
+        if (await postOrder()) {
+          setStatus(form, 'Заявка отправлена. Я напишу вам в мессенджере.', 'ok');
+          form.reset();
+          lines = [defaultLine()];
+          renderLines(list);
+          updateQuote(form);
+        } else {
+          await openTelegram(catalog.endpoint ? 'Сервер заявок недоступен.' : '');
+        }
+      } finally {
+        if (submit) submit.disabled = false;
+      }
+    });
+  }
+
+  const start = () => {
+    const form = document.querySelector<HTMLFormElement>('[data-order-form]');
+    if (form) bindForm(form);
+  };
+
+  start();
+  document.addEventListener('astro:page-load', start);
+</script>

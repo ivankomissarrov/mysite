@@ -1,0 +1,58 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ArticleGrid from '../components/ArticleGrid.astro';
+import Avatar from '../components/Avatar.astro';
+import Partners from '../components/Partners.astro';
+import MessengerCta from '../components/MessengerCta.astro';
+import { site } from '../data/site';
+---
+
+<BaseLayout type="profile">
+  <section class="hero wrap">
+    <span class="glow-orb" style="top: -40px; left: 8%;"></span>
+    <span class="glow-orb" style="right: 6%; top: 40px; background: radial-gradient(circle, rgba(92,225,255,.22), transparent 68%);"></span>
+    <Avatar class="hero-avatar" size={240} alt={site.name} priority hint />
+    <p class="hero-kicker">Игропрактика и геймдизайн</p>
+    <h1>
+      {site.name}
+      <br />
+      <span class="gradient-text">Игры для образования</span>
+    </h1>
+    <p class="lede">
+      Разрабатываю настольные игры и геймифицирую обучение. Есть идея или проект?
+      <br class="lede-break" />
+      Давайте превратим их в игру, в которую действительно захочется играть!
+    </p>
+    <div class="actions">
+      <MessengerCta />
+      <a class="btn btn-ghost" href={site.cta.order.href} data-face="smile">
+        {site.cta.order.label}
+      </a>
+      <a class="btn btn-ghost" href={site.cta.services.href} data-face="smile">
+        {site.cta.services.label}
+      </a>
+      <a class="btn btn-ghost" href={site.cta.work.href} data-face="old">
+        {site.cta.work.label}
+      </a>
+    </div>
+    <ul class="hero-stats">
+      {
+        site.stats.map((item) => (
+          <li>
+            <strong class="gradient-text">{item.value}</strong>
+            <span>{item.label}</span>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <Partners />
+
+  <section class="section wrap" id="posts">
+    <div class="section-head">
+      <h2>Посты</h2>
+    </div>
+    <ArticleGrid pageSize={6} eagerCount={3} />
+  </section>
+</BaseLayout>

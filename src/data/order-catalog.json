@@ -1,0 +1,88 @@
+{
+  "endpoint": "https://script.google.com/macros/s/AKfycby09fUUj5luYBVE4wj6twRgkioJKhLmy7JM76jZ1xpXdzLVHzITL-gMFvP3OpVSI3eMGQ/exec",
+  "telegramShare": "https://t.me/IvanKomissarov",
+  "currency": "RUB",
+  "variancePercent": 20,
+  "varianceNote": "Цена ориентировочная и может варьироваться в пределах 20%",
+  "negotiableLabel": "по договорённости",
+  "discounts": [
+    { "from": 200000, "percent": 15 },
+    { "from": 100000, "percent": 10 },
+    { "from": 50000, "percent": 5 }
+  ],
+  "products": [
+    {
+      "id": "consult",
+      "name": "Онлайн консультация",
+      "kind": "hours",
+      "hourlyRate": 5000,
+      "hoursMin": 1,
+      "hoursMax": 10
+    },
+    {
+      "id": "boardgame",
+      "name": "Настольная игра под ключ",
+      "kind": "options",
+      "basePrice": 120000,
+      "options": [
+        { "id": "art", "name": "Иллюстрации", "price": 40000 },
+        { "id": "layout", "name": "Вёрстка макета", "price": 25000 },
+        { "id": "method", "name": "Методические материалы", "price": 20000 },
+        { "id": "print", "name": "Сопровождение печати", "price": 15000 }
+      ]
+    },
+    {
+      "id": "rework",
+      "name": "Доработка вашей игры",
+      "kind": "options",
+      "basePrice": 40000,
+      "options": [
+        { "id": "balance", "name": "Баланс и правила", "price": 20000 },
+        { "id": "mechanics", "name": "Новые механики", "price": 35000 },
+        { "id": "copy", "name": "Редактура текстов", "price": 15000 },
+        { "id": "playtest", "name": "Тестирование с группой", "price": 25000 }
+      ]
+    },
+    {
+      "id": "course",
+      "name": "Очный курс (3 дня)",
+      "kind": "options",
+      "basePrice": 90000,
+      "options": [
+        { "id": "handouts", "name": "Раздаточные материалы", "price": 15000 },
+        { "id": "certs", "name": "Сертификаты участникам", "price": 10000 },
+        { "id": "travel", "name": "Выезд в другой город", "price": 40000 },
+        { "id": "record", "name": "Запись занятий", "price": 20000 }
+      ]
+    },
+    {
+      "id": "larp",
+      "name": "Игра живого действия под ключ",
+      "kind": "options",
+      "basePrice": 150000,
+      "options": [
+        { "id": "script", "name": "Сценарий и роли", "price": 50000 },
+        { "id": "props", "name": "Реквизит", "price": 30000 },
+        { "id": "hosts", "name": "Ведущие на площадке", "price": 40000 },
+        { "id": "media", "name": "Фото- и видеосъёмка", "price": 25000 }
+      ]
+    },
+    {
+      "id": "teambuilding",
+      "name": "Организация корпоратива/тимбилдинга",
+      "kind": "options",
+      "basePrice": 80000,
+      "options": [
+        { "id": "venue", "name": "Площадка и логистика", "price": 40000 },
+        { "id": "host", "name": "Ведущий", "price": 25000 },
+        { "id": "kit", "name": "Игровой реквизит", "price": 20000 },
+        { "id": "wrap", "name": "Фасилитация итогов", "price": 15000 }
+      ]
+    },
+    {
+      "id": "other",
+      "name": "Что-то другое",
+      "kind": "custom"
+    }
+  ]
+}

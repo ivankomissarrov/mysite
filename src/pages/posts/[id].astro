@@ -1,0 +1,74 @@
+---
+import { render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { articlePath, getPublishedArticles } from '../../lib/articles';
+import { site } from '../../data/site';
+
+export async function getStaticPaths() {
+  const articles = await getPublishedArticles();
+  return articles.map((article) => ({
+    params: { id: article.id },
+    props: { article },
+  }));
+}
+
+const { article } = Astro.props;
+const { Content } = await render(article);
+const published = article.data.pubDate.toISOString();
+const updated = (article.data.updatedDate ?? article.data.pubDate).toISOString();
+const formatted = article.data.pubDate.toLocaleDateString('ru-RU', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+
+const articleLdPath = articlePath(article);
+---
+
+<BaseLayout
+  title={article.data.title}
+  description={article.data.description}
+  type="article"
+  publishedTime={published}
+  updatedTime={updated}
+  path={articleLdPath}
+  image={article.data.cover}
+  breadcrumbs={[
+    { name: 'Главная', href: '/' },
+    { name: article.data.title, href: articleLdPath },
+  ]}
+  article={{
+    title: article.data.title,
+    description: article.data.description,
+    url: new URL(articleLdPath, site.url).href,
+    published,
+    updated,
+    cover: article.data.cover,
+  }}
+>
+
+  <article class="wrap">
+    <header class="article-header">
+      <div class="meta">
+        <time datetime={published}>{formatted}</time>
+        {
+          article.data.tags.length > 0 && (
+            <span class="tags">
+              {article.data.tags.map((tag) => (
+                <span class="tag">#{tag}</span>
+              ))}
+            </span>
+          )
+        }
+      </div>
+      <h1>{article.data.title}</h1>
+      <p class="lede" style="margin-inline: 0;">{article.data.description}</p>
+    </header>
+    <div class="prose">
+      <Content />
+    </div>
+    <p class="section">
+      <a class="muted-link" href="/#posts">← К постам</a>
+    </p>
+  </article>
+</BaseLayout>

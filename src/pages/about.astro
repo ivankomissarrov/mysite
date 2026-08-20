@@ -1,0 +1,69 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Avatar from '../components/Avatar.astro';
+import Partners from '../components/Partners.astro';
+import MessengerCta from '../components/MessengerCta.astro';
+import { site } from '../data/site';
+---
+
+<BaseLayout
+  title="Портфолио и опыт"
+  description="Иван Комиссаров — игропрактик и геймдизайнер: образовательные игры, курсы, Граникон и Гильдия разработчиков настольных игр."
+  breadcrumbs={[
+    { name: 'Главная', href: '/' },
+    { name: 'Портфолио и опыт', href: '/about/' },
+  ]}
+>
+  <section class="page-hero wrap">
+    <Avatar class="hero-avatar hero-avatar-sm" size={180} alt={site.name} />
+    <p class="hero-kicker">Портфолио и опыт</p>
+    <h1 class="page-title">
+      {site.name}
+      <br />
+      <span class="gradient-text">Игропрактик и геймдизайнер</span>
+    </h1>
+    <div class="actions">
+      <MessengerCta />
+    </div>
+  </section>
+
+  <section class="section wrap prose">
+    <p>
+      Создаю игры для образования, веду курсы и мастер-классы, собираю настолки вместе с дизайнерами и
+      художниками. Работаю как операционный руководитель проектов в Гильдии разработчиков настольных игр
+      и как операционный руководитель конвента Граникон. Преподаю настольный геймдизайн в Universal
+      University, участвую в программе Scream School.
+    </p>
+    <p>
+      Среди проектов — геополитическая метаигра на 300 человек, образовательные настолки, бизнес-игра для
+      TeenSourcing, годовая геймификация для гимназии Примакова и напольная «Страна Бабашек» для сообщества
+      педагогов. Могу усилить учебный курс игровыми механиками, собрать игру под ключ, разобрать чужой
+      прототип или обучить команду педагогов. Курс «Прикладная игропрактика» — на
+      <a href="https://mosaicum.ru/igropraktika/">mosaicum.ru</a>.
+    </p>
+    <p>
+      Сотрудничество: Telegram
+      <a href={site.telegram}>{site.telegramHandle}</a>. Страница ВКонтакте —
+      <a href={site.vk}>vk.ru/ivankomissarrov</a>.
+    </p>
+  </section>
+
+  <Partners />
+
+  <section class="section wrap">
+    <div class="grid-3">
+      <article class="card">
+        <h3>Гильдия / ГРаНИ</h3>
+        <p>Операционный руководитель проектов: конвент, подкаст, стримы и конкурсы для авторов.</p>
+      </article>
+      <article class="card">
+        <h3>Преподавание</h3>
+        <p>Universal University, Scream School, интенсивы по игропрактике для педагогов.</p>
+      </article>
+      <article class="card">
+        <h3>Игры</h3>
+        <p>Автор и девелопер настолок, в том числе «Страна Бабашек» для детских садов.</p>
+      </article>
+    </div>
+  </section>
+</BaseLayout>

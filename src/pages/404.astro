@@ -1,0 +1,20 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import MessengerCta from '../components/MessengerCta.astro';
+---
+
+<BaseLayout title="Страница не найдена" description="Такой страницы нет. Вернитесь на главную.">
+  <section class="hero wrap">
+    <p class="hero-kicker">404</p>
+    <h1>
+      Нет такой страницы
+      <br />
+      <span class="gradient-text">Но сайт на месте</span>
+    </h1>
+    <p class="lede">Адрес мог измениться или в ссылке опечатка.</p>
+    <div class="actions">
+      <a class="btn btn-primary" href="/">На главную</a>
+      <MessengerCta variant="ghost" />
+    </div>
+  </section>
+</BaseLayout>

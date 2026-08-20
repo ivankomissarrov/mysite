@@ -1,0 +1,31 @@
+---
+import { site } from '../data/site';
+---
+
+<footer class="site-footer">
+  <div class="wrap footer-inner">
+    <p class="footer-copy">© {new Date().getFullYear()} {site.name}</p>
+    <p class="footer-links">
+      {
+        site.contacts.map((item) => (
+          <a
+            class="muted-link"
+            href={item.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            data-face={item.href.startsWith('https://t.me/') ? 'smile' : undefined}
+          >
+            {item.label}
+          </a>
+        ))
+      }
+      <a class="muted-link" href={site.cta.services.href} data-face="smile">{site.cta.services.label}</a>
+      <a class="muted-link" href={site.cta.work.href} data-face="old">{site.cta.work.label}</a>
+      <a class="muted-link" href="/rss.xml">RSS</a>
+    </p>
+    <p class="footer-legal">
+      <a class="muted-link" href={site.cta.privacy.href}>{site.cta.privacy.label}</a>
+      <a class="muted-link" href={site.cta.confidentiality.href}>{site.cta.confidentiality.label}</a>
+    </p>
+  </div>
+</footer>

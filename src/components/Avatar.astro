@@ -1,0 +1,196 @@
+---
+import { site } from '../data/site';
+
+interface Props {
+  class?: string;
+  size?: number;
+  alt?: string;
+  priority?: boolean;
+  decorative?: boolean;
+  plain?: boolean;
+  hint?: boolean;
+}
+
+const {
+  class: className = 'hero-avatar',
+  size = 240,
+  alt = '',
+  priority = false,
+  decorative = false,
+  plain = false,
+  hint = false,
+} = Astro.props;
+---
+
+{
+  plain ? (
+    <div class={className} aria-hidden={decorative ? 'true' : undefined}>
+      <div class="avatar-swap">
+        <img
+          class="face face-default"
+          src={site.avatar}
+          alt={decorative ? '' : alt}
+          width={size}
+          height={size}
+          decoding="async"
+        />
+      </div>
+    </div>
+  ) : (
+<div class:list={['hero-avatar-frame', { 'hero-avatar-frame--hint': hint }]}>
+<button
+  class={className}
+  type="button"
+  data-avatar-cycle
+  title="Нажмите, чтобы сменить образ"
+  aria-label={decorative ? undefined : 'Сменить образ'}
+  aria-hidden={decorative ? 'true' : undefined}
+  tabindex={decorative ? -1 : undefined}
+>
+  <div class="avatar-swap">
+    {
+      site.faceSets.map((set, index) => (
+        <div
+          class:list={['avatar-set', { 'is-active': index === 0 }]}
+          data-face-set={set.id}
+          data-face-label={set.label}
+        >
+          <img
+            class="face face-default"
+            src={set.default}
+            alt={index === 0 ? alt : ''}
+            width={size}
+            height={size}
+            fetchpriority={priority && index === 0 ? 'high' : undefined}
+            decoding="async"
+            aria-hidden={index === 0 && alt ? undefined : 'true'}
+          />
+          <img
+            class="face face-smile"
+            src={set.smile}
+            alt=""
+            width={size}
+            height={size}
+            decoding="async"
+            aria-hidden="true"
+          />
+          <img
+            class="face face-old"
+            src={set.old}
+            alt=""
+            width={size}
+            height={size}
+            decoding="async"
+            aria-hidden="true"
+          />
+        </div>
+      ))
+    }
+    <span class="avatar-fx" aria-hidden="true">
+      <span class="avatar-fx-flash"></span>
+      <span class="avatar-fx-ring"></span>
+    </span>
+  </div>
+</button>
+{
+  hint && (
+    <span class="avatar-hint" aria-hidden="true">
+      <svg class="avatar-hint-cursor" viewBox="0 0 32 32" width="42" height="42">
+        <path
+          fill="#fff"
+          stroke="#111"
+          stroke-width="2"
+          stroke-linejoin="round"
+          d="M6.2 3.4v21.6l5.3-5.1 3.6 8.5 3.4-1.4-3.5-8.3 7.1-.2Z"
+        />
+      </svg>
+      <span class="avatar-hint-text">
+        {site.avatarHint[0]}
+        <br />
+        {site.avatarHint[1]}
+      </span>
+    </span>
+  )
+}
+</div>
+  )
+}
+
+<script>
+  const STORAGE_KEY = 'ik-face-set';
+  const bound = document.documentElement;
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  let currentId = '';
+  let swapTimer = 0;
+  let endTimer = 0;
+
+  function setIds() {
+    const root = document.querySelector('[data-avatar-cycle]');
+    if (!(root instanceof HTMLElement)) return [];
+    return [...root.querySelectorAll('[data-face-set]')].map((el) => el.getAttribute('data-face-set') ?? '');
+  }
+
+  function apply(id) {
+    const ids = setIds();
+    const next = ids.includes(id) ? id : ids[0];
+    if (!next) return;
+    currentId = next;
+    document.querySelectorAll('[data-avatar-cycle]').forEach((root) => {
+      if (!(root instanceof HTMLElement)) return;
+      root.querySelectorAll('[data-face-set]').forEach((el) => {
+        el.classList.toggle('is-active', el.getAttribute('data-face-set') === next);
+      });
+      const active = root.querySelector(`[data-face-set="${next}"]`);
+      const label = active instanceof HTMLElement ? active.dataset.faceLabel : '';
+      if (root.getAttribute('aria-hidden') !== 'true') {
+        root.setAttribute('aria-label', label ? `Сменить образ, сейчас ${label}` : 'Сменить образ');
+      }
+    });
+  }
+
+  function playMorph() {
+    document.querySelectorAll('.hero-avatar[data-avatar-cycle]').forEach((root) => {
+      if (!(root instanceof HTMLElement)) return;
+      root.classList.remove('is-morphing');
+      void root.offsetWidth;
+      root.classList.add('is-morphing');
+    });
+    window.clearTimeout(endTimer);
+    endTimer = window.setTimeout(() => {
+      document.querySelectorAll('.hero-avatar[data-avatar-cycle]').forEach((root) => {
+        root.classList.remove('is-morphing');
+      });
+    }, 720);
+  }
+
+  function restore() {
+    apply(localStorage.getItem(STORAGE_KEY) ?? '');
+  }
+
+  function cycle(event) {
+    const button = event.target instanceof Element ? event.target.closest('[data-avatar-cycle]') : null;
+    if (!(button instanceof HTMLElement)) return;
+    event.preventDefault();
+    event.stopPropagation();
+    const ids = setIds();
+    const current = currentId || ids[0];
+    const index = Math.max(0, ids.indexOf(current));
+    const next = ids[(index + 1) % ids.length];
+    currentId = next;
+    localStorage.setItem(STORAGE_KEY, next);
+    if (reduceMotion.matches) {
+      apply(next);
+      return;
+    }
+    playMorph();
+    window.clearTimeout(swapTimer);
+    swapTimer = window.setTimeout(() => apply(next), 170);
+  }
+
+  restore();
+  if (bound.dataset.faceCycleBound !== '1') {
+    bound.dataset.faceCycleBound = '1';
+    document.addEventListener('astro:after-swap', restore);
+    document.addEventListener('click', cycle);
+  }
+</script>

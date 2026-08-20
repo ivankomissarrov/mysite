@@ -1,0 +1,28 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import OrderForm from '../components/OrderForm.astro';
+---
+
+<BaseLayout
+  title="Рассчитать заказ"
+  description="Иван Комиссаров: рассчитайте заказ на настольную игру, курс, консультацию или игровой формат. Ориентировочная цена появится сразу."
+  path="/order/"
+  breadcrumbs={[
+    { name: 'Главная', href: '/' },
+    { name: 'Рассчитать заказ', href: '/order/' },
+  ]}
+>
+  <section class="page-hero wrap">
+    <p class="hero-kicker">Заявка</p>
+    <h1 class="page-title">
+      Рассчитать <span class="gradient-text">заказ</span>
+    </h1>
+    <p class="lede">
+      Соберите одну или несколько позиций, оставьте контакты и опишите проект. Отвечу вам в ближайшее время!
+    </p>
+  </section>
+
+  <section class="section wrap order-page">
+    <OrderForm />
+  </section>
+</BaseLayout>

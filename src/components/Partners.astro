@@ -1,0 +1,34 @@
+---
+import { site } from '../data/site';
+---
+
+{
+  site.showPartners && (
+    <section class="partners wrap" aria-labelledby="partners-title">
+      <p class="hero-kicker partners-kicker">Партнёрства</p>
+      <h2 id="partners-title">Мне доверяют</h2>
+      <p class="partners-lede">Образовательные программы, корпоративные игры и проекты для бизнеса.</p>
+      <ul class="partners-mosaic">
+        {
+          site.partners.map((partner) => (
+            <li class={`partner partner--${partner.id}`}>
+              <img
+                src={partner.src}
+                alt={partner.name}
+                width={partner.width}
+                height={partner.height}
+                loading="lazy"
+                decoding="async"
+              />
+              {'wordmark' in partner && (
+                <span class="partner-wordmark" aria-hidden="true">
+                  {partner.wordmark}
+                </span>
+              )}
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+  )
+}
