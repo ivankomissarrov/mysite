@@ -23,6 +23,8 @@ import paramiko
 # Must exist after deploy — hero face cycle / homepage break without these.
 REQUIRED_REMOTE_FILES = [
     "index.html",
+    "images/favicon-32.png",
+    "favicon.ico",
     "images/avatar.webp",
     "images/smile.webp",
     "images/old.webp",
@@ -37,10 +39,15 @@ REQUIRED_REMOTE_FILES = [
 ]
 
 # Keep these on the server while the rest of the tree is cleared, so a long
-# upload (or a cancelled job) cannot blank the homepage or hero cycle.
+# upload (or a cancelled job) cannot blank the homepage, favicon, or hero cycle.
 PRESERVE_EXACT = {
     "index.html",
     "404.html",
+    "favicon.ico",
+    "favicon.png",
+    "favicon-32.png",
+    "apple-touch-icon.png",
+    "images/favicon-32.png",
     "images/avatar.webp",
     "images/smile.webp",
     "images/old.webp",
@@ -139,7 +146,16 @@ def main() -> None:
         rel = path.relative_to(local_root).as_posix()
         if rel.startswith("images/faces/"):
             return (0, rel)
-        if rel in {"images/avatar.webp", "images/smile.webp", "images/old.webp"}:
+        if rel in {
+            "images/avatar.webp",
+            "images/smile.webp",
+            "images/old.webp",
+            "images/favicon-32.png",
+            "favicon.ico",
+            "favicon.png",
+            "favicon-32.png",
+            "apple-touch-icon.png",
+        }:
             return (1, rel)
         if rel in {"index.html", "404.html"}:
             return (2, rel)
