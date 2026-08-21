@@ -111,12 +111,16 @@
     <main class="wrap drop" id="app">
       <h1>Редактор каталога заказа</h1>
       <p class="lede">
-        Откройте JSON, поправьте типы и цены, скачайте файл и положите его в
-        <code>src/data/order-catalog.json</code>.
+        Правьте типы, цены и тексты для главной. Кнопка
+        <strong>Сохранить в проект</strong> пишет в
+        <code>src/data/order-catalog.json</code> — после этого напишите агенту,
+        и каталог уйдёт на сайт. Можно также скачать JSON вручную.
       </p>
       <div class="bar">
         <label class="file-btn">Открыть JSON<input id="open" type="file" accept="application/json,.json" /></label>
-        <button class="primary" id="download" type="button">Скачать JSON</button>
+        <button class="primary" id="save-project" type="button">Сохранить в проект</button>
+        <button id="download" type="button">Скачать JSON</button>
+        <button id="reload-project" type="button">Загрузить с диска</button>
         <button id="reset" type="button">Вернуть стартовый</button>
       </div>
       <p class="status" id="status">Можно также перетащить файл в окно.</p>
@@ -711,7 +715,37 @@
         link.download = 'order-catalog.json';
         link.click();
         URL.revokeObjectURL(url);
-        setStatus('Скачан order-catalog.json — замените им src/data/order-catalog.json');
+        setStatus('Скачан order-catalog.json — можно также нажать «Сохранить в проект».');
+      });
+
+      async function loadFromProject() {
+        const response = await fetch('/api/catalog', { cache: 'no-store' });
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        state = normalize(await response.json());
+        render();
+        setStatus('Загружен текущий src/data/order-catalog.json — правьте цены и жмите «Сохранить в проект».');
+      }
+
+      document.getElementById('save-project').addEventListener('click', async () => {
+        try {
+          const payload = exportCatalog(state);
+          const response = await fetch('/api/save', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+          });
+          const result = await response.json().catch(() => ({}));
+          if (!response.ok || !result.ok) {
+            throw new Error(result.error || `HTTP ${response.status}`);
+          }
+          setStatus(`Сохранено в ${result.path} (${result.bytes} байт). Напишите агенту — зальём на сайт.`);
+        } catch (error) {
+          setStatus(`Не удалось сохранить в проект: ${error.message || error}`);
+        }
+      });
+
+      document.getElementById('reload-project').addEventListener('click', () => {
+        loadFromProject().catch(() => setStatus('Не получилось загрузить каталог с диска.'));
       });
 
       document.getElementById('reset').addEventListener('click', () => {
@@ -737,7 +771,10 @@
         if (file) readFile(file).catch(() => setStatus('Не получилось прочитать JSON.'));
       });
 
-      render();
+      loadFromProject().catch(() => {
+        render();
+        setStatus('Локальный API недоступен — показан встроенный стартовый каталог. Откройте JSON вручную.');
+      });
     </script>
   </body>
 </html>
