@@ -75,7 +75,10 @@ const server = http.createServer(async (req, res) => {
       return;
     }
 
-    let filePath = pathname === '/' ? '/tools/order-editor.html' : pathname;
+    let filePath = pathname;
+    if (pathname === '/' || pathname === '/order-editor' || pathname === '/order-editor.html') {
+      filePath = '/tools/order-editor.html';
+    }
     if (filePath.includes('..')) {
       send(res, 400, 'Bad path');
       return;
