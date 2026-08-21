@@ -25,16 +25,10 @@ import { site } from '../data/site';
       Давайте превратим их в игру, в которую действительно захочется играть!
     </p>
     <div class="actions">
-      <MessengerCta />
-      <a class="btn btn-ghost" href={site.cta.order.href} data-face="smile">
+      <a class="btn btn-primary" href={site.cta.order.href} data-face="smile">
         {site.cta.order.label}
       </a>
-      <a class="btn btn-ghost" href={site.cta.services.href} data-face="smile">
-        {site.cta.services.label}
-      </a>
-      <a class="btn btn-ghost" href={site.cta.work.href} data-face="old">
-        {site.cta.work.label}
-      </a>
+      <MessengerCta variant="ghost" />
     </div>
     <ul class="hero-stats">
       {
@@ -51,6 +45,19 @@ import { site } from '../data/site';
   <HomePopularServices />
 
   <Partners />
+
+  <section class="section wrap portfolio-cta" id="portfolio">
+    <div class="portfolio-cta-inner">
+      <h2>Портфолио и опыт</h2>
+      <p>
+        Игры, курсы, конвенты и геймификация для образования и бизнеса — коротко о проектах
+        и том, как я работаю.
+      </p>
+      <a class="btn btn-ghost" href={site.cta.work.href} data-face="old">
+        Смотреть портфолио
+      </a>
+    </div>
+  </section>
 
   <section class="section wrap" id="posts">
     <div class="section-head">
