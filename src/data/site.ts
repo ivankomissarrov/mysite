@@ -137,7 +137,7 @@ export const site = {
     { href: 'https://t.me/IvanKomissarov', label: 'Telegram' },
     { href: 'https://vk.ru/ivankomissarrov', label: 'ВКонтакте' },
   ],
-  avatarHint: ['адаптируюсь под ваш проект.', 'проверьте! (клик на аватар)'],
+  avatarHint: ['Адаптируюсь под ваш проект.', 'Кликните на аватар — сменится образ'],
   showPartners: false,
   partners: [
     { id: 'prosveshchenie', name: 'ГК «Просвещение»', src: '/images/partners/prosveshchenie.svg', width: 159, height: 62 },

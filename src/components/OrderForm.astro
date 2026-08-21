@@ -4,26 +4,16 @@ import type { OrderCatalog } from '../lib/order';
 import { site } from '../data/site';
 
 const orderCatalog = catalog as OrderCatalog;
+const messengerChoices = [
+  { id: 'telegram', label: 'Telegram' },
+  { id: 'vk', label: 'ВКонтакте' },
+  { id: 'max', label: 'MAX' },
+] as const;
 ---
 
 <form class="order-form" data-order-form novalidate>
-  <label class="order-field">
-    <span>Имя</span>
-    <input name="name" type="text" required autocomplete="name" placeholder="Как к вам обращаться" />
-  </label>
-
-  <div class="order-check order-consent">
-    <input id="order-consent" name="consent" type="checkbox" required />
-    <p class="order-consent-text">
-      <label for="order-consent">Согласен с </label>
-      <a href={site.cta.privacy.href}>политикой обработки персональных данных</a>
-      <label for="order-consent"> и </label>
-      <a href={site.cta.confidentiality.href}>политикой конфиденциальности</a>
-    </p>
-  </div>
-
   <div class="order-lines" data-lines></div>
-  <button class="btn btn-ghost order-add" type="button" data-add-line>Добавить позицию</button>
+  <button class="btn btn-ghost order-add" type="button" data-add-line>Добавить ещё услугу</button>
 
   <label class="order-field">
     <span>Комментарий</span>
@@ -36,13 +26,39 @@ const orderCatalog = catalog as OrderCatalog;
 
   <div class="order-contacts">
     <label class="order-field">
+      <span>Имя</span>
+      <input name="name" type="text" required autocomplete="name" placeholder="Как к вам обращаться" />
+    </label>
+    <label class="order-field">
       <span>Телефон</span>
       <input name="phone" type="tel" required autocomplete="tel" placeholder="8 (925) 000 00 00" />
     </label>
     <label class="order-field">
       <span>Мессенджер</span>
-      <input name="messenger" type="text" autocomplete="nickname" placeholder="ВК, Telegram или MAX" />
+      <select name="messengerChannel" required>
+        <option value="" disabled selected>Выберите канал</option>
+        {messengerChoices.map((item) => <option value={item.label}>{item.label}</option>)}
+      </select>
     </label>
+    <label class="order-field">
+      <span>Ник или ссылка</span>
+      <input
+        name="messenger"
+        type="text"
+        autocomplete="nickname"
+        placeholder="@username или ссылка на профиль"
+      />
+    </label>
+  </div>
+
+  <div class="order-check order-consent">
+    <input id="order-consent" name="consent" type="checkbox" required />
+    <p class="order-consent-text">
+      <label for="order-consent">Согласен с </label>
+      <a href={site.cta.privacy.href}>политикой обработки персональных данных</a>
+      <label for="order-consent"> и </label>
+      <a href={site.cta.confidentiality.href}>политикой конфиденциальности</a>
+    </p>
   </div>
 
   <label class="order-honeypot" aria-hidden="true">
@@ -165,7 +181,7 @@ const orderCatalog = catalog as OrderCatalog;
           <article class="card order-line" data-line="${line.key}">
             <div class="order-line-head">
               <label class="order-field">
-                <span>Тип продукта</span>
+                <span>Услуга</span>
                 <select data-product>
                   ${catalog.products
                     .map(
@@ -320,12 +336,19 @@ const orderCatalog = catalog as OrderCatalog;
 
       const name = String(data.get('name') ?? '').trim();
       const phone = String(data.get('phone') ?? '').trim();
-      const messenger = String(data.get('messenger') ?? '').trim();
+      const messengerChannel = String(data.get('messengerChannel') ?? '').trim();
+      const messengerHandle = String(data.get('messenger') ?? '').trim();
+      const messenger = [messengerChannel, messengerHandle].filter(Boolean).join(': ');
       const comment = String(data.get('comment') ?? '').trim();
       const consent = data.get('consent') === 'on';
       if (!name) {
         setStatus(form, 'Укажите имя.', 'err');
         form.querySelector<HTMLInputElement>('[name="name"]')?.focus();
+        return;
+      }
+      if (!messengerChannel) {
+        setStatus(form, 'Выберите мессенджер.', 'err');
+        form.querySelector<HTMLSelectElement>('[name="messengerChannel"]')?.focus();
         return;
       }
       if (!consent) {

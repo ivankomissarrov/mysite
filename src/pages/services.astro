@@ -60,6 +60,13 @@ const services = catalog.products.map((product) => ({
                 ))}
               </ul>
             )}
+            <a
+              class="btn btn-ghost btn-compact service-card-cta"
+              href={`/order/?product=${service.id}`}
+              data-face="smile"
+            >
+              Рассчитать
+            </a>
           </article>
         ))
       }
