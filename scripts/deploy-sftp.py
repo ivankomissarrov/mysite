@@ -23,6 +23,8 @@ import paramiko
 # Must exist after deploy — hero face cycle / homepage break without these.
 REQUIRED_REMOTE_FILES = [
     "index.html",
+    "order/index.html",
+    "services/index.html",
     "images/favicon-32.png",
     "favicon.ico",
     "images/avatar.webp",
@@ -38,11 +40,14 @@ REQUIRED_REMOTE_FILES = [
     "images/faces/potter/default.webp",
 ]
 
-# Keep these on the server while the rest of the tree is cleared, so a long
-# upload (or a cancelled job) cannot blank the homepage, favicon, or hero cycle.
+# Keep these online while the rest of the tree is cleared, so a long upload
+# cannot blank the homepage, key pages, favicon, or hero cycle.
 PRESERVE_EXACT = {
     "index.html",
     "404.html",
+    "order/index.html",
+    "services/index.html",
+    "about/index.html",
     "favicon.ico",
     "favicon.png",
     "favicon-32.png",
@@ -52,7 +57,10 @@ PRESERVE_EXACT = {
     "images/smile.webp",
     "images/old.webp",
 }
-PRESERVE_PREFIXES = ("images/faces/",)
+PRESERVE_PREFIXES = (
+    "images/faces/",
+    "_astro/",
+)
 
 
 def require(name: str) -> str:
@@ -157,9 +165,17 @@ def main() -> None:
             "apple-touch-icon.png",
         }:
             return (1, rel)
-        if rel in {"index.html", "404.html"}:
+        if rel.startswith("_astro/"):
             return (2, rel)
-        return (3, rel)
+        if rel in {
+            "index.html",
+            "404.html",
+            "order/index.html",
+            "services/index.html",
+            "about/index.html",
+        }:
+            return (3, rel)
+        return (4, rel)
 
     files.sort(key=priority)
 
@@ -174,7 +190,7 @@ def main() -> None:
             "Make sure public/images/faces is committed."
         )
 
-    critical_first = [p for p in files if priority(p)[0] < 3]
+    critical_first = [p for p in files if priority(p)[0] < 4]
 
     print(f"Connecting to {user}@{host}:{port}")
     print(f"Uploading {len(files)} files to {remote_root}/ ({len(local_faces)} face images)")

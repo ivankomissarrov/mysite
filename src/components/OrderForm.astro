@@ -155,6 +155,10 @@ const orderCatalog = catalog as OrderCatalog;
           product?.kind === 'custom'
             ? `<p class="order-custom-hint">Опишите задачу в комментарии ниже — цену согласуем отдельно.</p>`
             : '';
+        const emptyOptions =
+          product?.kind === 'options' && !(product.options ?? []).length
+            ? `<p class="order-custom-hint">Дополнительные опции для этой услуги пока не заданы — уточним состав в переписке.</p>`
+            : '';
         const canRemove = lines.length > 1 ? '' : 'hidden';
 
         return `
@@ -175,6 +179,7 @@ const orderCatalog = catalog as OrderCatalog;
             </div>
             ${hours}
             ${options ? `<div class="order-options">${options}</div>` : ''}
+            ${emptyOptions}
             ${custom}
             <p class="order-line-sum" data-line-sum></p>
           </article>
